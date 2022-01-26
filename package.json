@@ -1,0 +1,19 @@
+{
+  "name": "translation-platform-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --watch src --exec npx ts-node src/index.ts",
+    "build": "tsc",
+    "prod": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^3.27.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
