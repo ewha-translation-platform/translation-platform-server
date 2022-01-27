@@ -1,12 +1,24 @@
 import Fastify from "fastify";
-const server = Fastify();
-const PORT = 5000;
+import middie from "middie";
+import morgan from "morgan";
+import envOpt from "./config";
+import { fastifyEnv, fastifyHelmet, prismaPlugin } from "./plugins";
+import { usersRoute } from "./routes";
 
-server.get("/", (_, reply) => {
-  reply.send("Hello world!");
-});
+async function bootstrap() {
+  const server = Fastify();
 
-server
-  .listen(PORT)
-  .then(() => console.log(`listening on port ${PORT}...`))
-  .catch(console.error);
+  server.register(fastifyHelmet);
+  server.register(fastifyEnv, envOpt);
+  server.register(prismaPlugin);
+  await server.register(middie);
+  server.use(morgan("dev"));
+
+  server.register(usersRoute, { prefix: "/users" });
+
+  await server.ready();
+  await server.listen(server.config.PORT, "0.0.0.0");
+  console.log(`listening on port ${server.config.PORT}`);
+}
+
+bootstrap();
