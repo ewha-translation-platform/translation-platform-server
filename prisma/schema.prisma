@@ -9,7 +9,7 @@ datasource db {
 
 model College {
   id          Int          @id @default(autoincrement())
-  name        String
+  name        String       @unique
   departments Department[]
 
   @@map("college")
@@ -17,7 +17,7 @@ model College {
 
 model Department {
   id      Int     @id @default(autoincrement())
-  name    String
+  name    String  @unique
   college College @relation(fields: [collegeId], references: [id])
   users   User[]
 
@@ -28,7 +28,7 @@ model Department {
 
 model User {
   id               Int                       @id @default(autoincrement())
-  academicId       String                    @map("academic_id")
+  academicId       String                    @unique @map("academic_id")
   firstName        String                    @map("first_name")
   lastName         String                    @map("last_name")
   email            String                    @unique
@@ -56,6 +56,7 @@ model Course {
 
   classes Class[]
 
+  @@unique([year, semester, code, name])
   @@map("course")
 }
 
@@ -70,6 +71,7 @@ model Class {
 
   courseId Int @map("course_id")
 
+  @@unique([courseId, classNumber])
   @@map("class")
 }
 
@@ -149,6 +151,7 @@ model Submission {
   studentId    Int @map("student_id")
   assignmentId Int @map("assignment_id")
 
+  @@unique([assignmentId, studentId, staged])
   @@map("submission")
 }
 
