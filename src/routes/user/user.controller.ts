@@ -1,6 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
 import { CreateUserDto, CreateUserDtoSchema } from "./dto/create-user.dto";
+import { UpdateUserDto, UpdateUserDtoSchema } from "./dto/update-user.dto";
 import { UserEntity, UserEntitySchema } from "./entities/user.entity";
 import userService from "./user.service";
 
@@ -12,28 +13,21 @@ export default async function (server: FastifyInstance) {
       response: { 200: Type.Array(UserEntitySchema) },
     },
     async handler(): Promise<UserEntity[]> {
-      return (await server.userService.findAll({})).map<UserEntity>((user) => ({
-        ...user,
-        department: user.department.name,
-        college: user.department.college.name,
-      }));
+      const data = await server.userService.findAll({});
+      return data.map((d) => new UserEntity(d));
     },
   });
 
-  const GetUserParamSchema = Type.Object({ id: Type.Number() });
-  type GetUserParam = Static<typeof GetUserParamSchema>;
-  server.get<{ Params: GetUserParam }>("/:id", {
+  const ParamsSchema = Type.Object({ id: Type.Number() });
+  type Params = Static<typeof ParamsSchema>;
+  server.get<{ Params: Params }>("/:id", {
     schema: {
-      params: GetUserParamSchema,
+      params: ParamsSchema,
       response: { 200: UserEntitySchema },
     },
     async handler({ params: { id } }): Promise<UserEntity> {
-      const user = await server.userService.findOne({ id });
-      return {
-        ...user,
-        department: user.department.name,
-        college: user.department.college.name,
-      };
+      const data = await server.userService.findOne({ id });
+      return new UserEntity(data);
     },
   });
 
@@ -42,36 +36,31 @@ export default async function (server: FastifyInstance) {
       body: CreateUserDtoSchema,
       response: { 201: UserEntitySchema },
     },
-    async handler({ body }): Promise<UserEntity> {
+    async handler({ body }, reply): Promise<UserEntity> {
       const { departmentId, ...rest } = body;
-      const user = await server.userService.create({
+      const data = await server.userService.create({
         ...rest,
         department: { connect: { id: departmentId } },
         isAdmin: false,
       });
-      return {
-        ...user,
-        department: user.department.name,
-        college: user.department.college.name,
-      };
+      reply.code(201);
+      return new UserEntity(data);
     },
   });
 
-  const PatchUserParamSchema = Type.Object({ id: Type.Number() });
-  type PatchUserParam = Static<typeof PatchUserParamSchema>;
-  server.patch<{ Params: PatchUserParam }>("/:id", {
-    schema: { params: PatchUserParamSchema },
-    async handler() {
-      return "This will update User";
+  server.patch<{ Params: Params; Body: UpdateUserDto }>("/:id", {
+    schema: { params: ParamsSchema, body: UpdateUserDtoSchema },
+    async handler({ params: { id }, body }): Promise<UserEntity> {
+      const data = await server.userService.update(id, body);
+      return new UserEntity(data);
     },
   });
 
-  const DeleteUserParamSchema = Type.Object({ id: Type.Number() });
-  type DeleteUserParam = Static<typeof DeleteUserParamSchema>;
-  server.delete<{ Params: DeleteUserParam }>("/:id", {
-    schema: { params: DeleteUserParamSchema },
-    async handler() {
-      return "This will delete User";
+  server.delete<{ Params: Params }>("/:id", {
+    schema: { params: ParamsSchema },
+    async handler({ params: { id } }): Promise<UserEntity> {
+      const data = await server.userService.delete(id);
+      return new UserEntity(data);
     },
   });
 }
