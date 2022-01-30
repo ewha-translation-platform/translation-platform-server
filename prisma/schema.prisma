@@ -16,10 +16,11 @@ model College {
 }
 
 model Department {
-  id      Int     @id @default(autoincrement())
-  name    String  @unique
-  college College @relation(fields: [collegeId], references: [id])
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  college College  @relation(fields: [collegeId], references: [id])
   users   User[]
+  Course  Course[]
 
   collegeId Int @map("college_id")
 
@@ -48,13 +49,15 @@ model User {
 }
 
 model Course {
-  id       Int      @id @default(autoincrement())
-  year     Int      @db.Year
-  semester Semester
-  code     String
-  name     String
+  id         Int        @id @default(autoincrement())
+  year       Int        @db.Year
+  semester   Semester
+  department Department @relation(fields: [departmentId], references: [id])
+  code       String
+  name       String
 
-  classes Class[]
+  classes      Class[]
+  departmentId Int
 
   @@unique([year, semester, code, name])
   @@map("course")
@@ -121,9 +124,9 @@ model Assignment {
   feedbackCategories FeedbackCategory[] @relation("categories_on_assignment")
   textFile           String             @map("text_file") @db.Text
   audioFile          Bytes?             @map("audio_file") @db.MediumBlob
-  sequentialRegions  Json               @map("sequential_regions")
-  maxPlayCount       Int                @default(0) @map("max_play_count")
-  playbackRate       Float              @default(1.0) @map("playback_rate")
+  sequentialRegions  Json?              @map("sequential_regions")
+  maxPlayCount       Int?               @default(0) @map("max_play_count")
+  playbackRate       Float?             @default(1.0) @map("playback_rate")
   submissions        Submission[]
   staged             Boolean            @default(false)
   updatedDateTime    DateTime           @updatedAt @map("updated_datetime")
@@ -139,8 +142,8 @@ model Submission {
   assignment      Assignment @relation(fields: [assignmentId], references: [id])
   textFile        String     @map("text_file") @db.Text
   audioFile       Bytes?     @map("audio_file") @db.MediumBlob
-  playCount       Int        @map("play_count")
-  playbackRate    Float      @map("playback_rate")
+  playCount       Int?       @map("play_count")
+  playbackRate    Float?     @map("playback_rate")
   staged          Boolean    @default(false)
   generalReview   String?    @map("general_review") @db.Text
   score           Int?
