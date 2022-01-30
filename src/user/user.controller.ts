@@ -1,6 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
-import { CreateUserDto, CreateUserDtoSchema } from "./dto/user.dto";
+import { CreateUserDto, CreateUserDtoSchema } from "./dto/create-user.dto";
 import { UserEntity, UserEntitySchema } from "./entities/user.entity";
 import userService from "./user.service";
 
