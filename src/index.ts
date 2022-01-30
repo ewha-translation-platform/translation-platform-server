@@ -3,7 +3,7 @@ import middie from "middie";
 import morgan from "morgan";
 import envOpt from "./config";
 import { fastifyEnv, fastifyHelmet, prismaPlugin } from "./plugins";
-import { usersRoute } from "./routes";
+import { userRoute } from "./user";
 
 async function bootstrap() {
   const server = Fastify();
@@ -14,7 +14,7 @@ async function bootstrap() {
   await server.register(middie);
   server.use(morgan("dev"));
 
-  server.register(usersRoute, { prefix: "/users" });
+  server.register(userRoute, { prefix: "/users" });
 
   await server.ready();
   await server.listen(server.config.PORT, "0.0.0.0");
