@@ -6,6 +6,7 @@ import { courseRoute } from "./course";
 import { fastifyEnv, fastifyHelmet, prismaPlugin } from "./plugins";
 import { userRoute } from "./user";
 import { classRoute } from "./class";
+import { assignmentRoute } from "./assignment";
 
 async function bootstrap() {
   const server = Fastify();
@@ -19,6 +20,7 @@ async function bootstrap() {
   server.register(userRoute, { prefix: "/users" });
   server.register(courseRoute, { prefix: "/courses" });
   server.register(classRoute, { prefix: "/classes" });
+  server.register(assignmentRoute, { prefix: "/assignments" });
 
   await server.ready();
   await server.listen(server.config.PORT, "0.0.0.0");
