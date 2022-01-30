@@ -1,12 +1,9 @@
+import envOpt from "@/config";
+import { fastifyEnv, fastifyHelmet, prismaPlugin } from "@/plugins";
+import { assignmentRoute, classRoute, courseRoute, userRoute } from "@/routes";
 import Fastify from "fastify";
 import middie from "middie";
 import morgan from "morgan";
-import envOpt from "./config";
-import { courseRoute } from "./course";
-import { fastifyEnv, fastifyHelmet, prismaPlugin } from "./plugins";
-import { userRoute } from "./user";
-import { classRoute } from "./class";
-import { assignmentRoute } from "./assignment";
 
 async function bootstrap() {
   const server = Fastify();

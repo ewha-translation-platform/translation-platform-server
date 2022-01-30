@@ -2,7 +2,7 @@ import {
   CourseEntity,
   CourseEntitySchema,
   CourseExtended,
-} from "@/course/entities/course.entity";
+} from "@/routes/course/entities/course.entity";
 import { Class } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
 
