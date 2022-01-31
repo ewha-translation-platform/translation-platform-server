@@ -1,6 +1,12 @@
 import envOpt from "@/config";
 import { fastifyEnv, fastifyHelmet, prismaPlugin } from "@/plugins";
-import { assignmentRoute, classRoute, courseRoute, userRoute } from "@/routes";
+import {
+  assignmentRoute,
+  classRoute,
+  courseRoute,
+  FeedbackCategoryRoute,
+  userRoute,
+} from "@/routes";
 import Fastify from "fastify";
 import middie from "middie";
 import morgan from "morgan";
@@ -18,6 +24,7 @@ async function bootstrap() {
   server.register(courseRoute, { prefix: "/courses" });
   server.register(classRoute, { prefix: "/classes" });
   server.register(assignmentRoute, { prefix: "/assignments" });
+  server.register(FeedbackCategoryRoute, { prefix: "/feedback-categories" });
 
   await server.ready();
   await server.listen(server.config.PORT, "0.0.0.0");
