@@ -1,7 +1,7 @@
 import { Role, User } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
 
-type UserExtended = User & {
+export type UserExtended = User & {
   department: { name: string; college: { name: string } };
 };
 
