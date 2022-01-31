@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import fp from "fastify-plugin";
+import { courseInclude } from "./entities/course.entity";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -10,16 +11,10 @@ declare module "fastify" {
 class CourseService {
   constructor(private readonly _prisma: PrismaClient) {}
 
-  private static _include = {
-    department: {
-      select: { name: true, college: { select: { name: true } } },
-    },
-  };
-
   async findAll(where: Prisma.CourseWhereInput) {
     const courses = await this._prisma.course.findMany({
       where,
-      include: CourseService._include,
+      ...courseInclude,
     });
     return courses;
   }
@@ -27,7 +22,7 @@ class CourseService {
   async findOne(where: Prisma.CourseWhereUniqueInput) {
     const course = await this._prisma.course.findUnique({
       where,
-      include: CourseService._include,
+      ...courseInclude,
     });
     if (!course) throw new Error("Not Found");
     return course;
@@ -36,7 +31,7 @@ class CourseService {
   async create(data: Prisma.CourseCreateInput) {
     const course = await this._prisma.course.create({
       data,
-      include: CourseService._include,
+      ...courseInclude,
     });
     if (!course) throw new Error("Not Found");
     return course;
@@ -46,14 +41,14 @@ class CourseService {
     return await this._prisma.course.update({
       where: { id },
       data,
-      include: CourseService._include,
+      ...courseInclude,
     });
   }
 
   async delete(id: number) {
     return await this._prisma.course.delete({
       where: { id },
-      include: CourseService._include,
+      ...courseInclude,
     });
   }
 }

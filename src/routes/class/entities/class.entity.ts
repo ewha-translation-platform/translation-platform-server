@@ -2,9 +2,16 @@ import {
   CourseEntity,
   CourseEntitySchema,
   CourseExtended,
+  courseInclude,
 } from "@/routes/course/entities/course.entity";
 import { Class } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
+
+export const classInclude = {
+  include: {
+    course: { ...courseInclude },
+  },
+};
 
 export const ClassEntitySchema = Type.Object({
   id: Type.Integer(),

@@ -1,6 +1,14 @@
 import { Course, Semester } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
 
+export const courseInclude = {
+  include: {
+    department: {
+      select: { name: true, college: { select: { name: true } } },
+    },
+  },
+};
+
 export type CourseExtended = Course & {
   department: { name: string; college: { name: string } };
 };
