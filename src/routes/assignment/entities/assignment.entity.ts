@@ -1,7 +1,7 @@
 import {
   FeedbackCategoryEntity,
   FeedbackCategoryEntitySchema,
-} from "@/routes/category/entities/category.entity";
+} from "@/routes/feedback-category/entities/feedback-category.entity";
 import { Static, Type } from "@sinclair/typebox";
 import { Assignment, AssignmentType, Prisma } from "@prisma/client";
 
