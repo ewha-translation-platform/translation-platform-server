@@ -6,6 +6,7 @@ import {
   courseRoute,
   feedbackCategoryRoute,
   feedbackRoute,
+  submissionRoute,
   userRoute,
 } from "@/routes";
 import Fastify from "fastify";
@@ -27,6 +28,7 @@ async function bootstrap() {
   server.register(assignmentRoute, { prefix: "/assignments" });
   server.register(feedbackCategoryRoute, { prefix: "/feedback-categories" });
   server.register(feedbackRoute, { prefix: "/feedbacks" });
+  server.register(submissionRoute, { prefix: "/submissions" });
 
   await server.ready();
   await server.listen(server.config.PORT, "0.0.0.0");

@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import fp from "fastify-plugin";
+import { userInclude } from "./entities/user.entity";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -10,16 +11,10 @@ declare module "fastify" {
 class UserService {
   constructor(private readonly _prisma: PrismaClient) {}
 
-  private static _include = {
-    department: {
-      select: { name: true, college: { select: { name: true } } },
-    },
-  };
-
   async findAll(where: Prisma.UserWhereInput) {
     const users = await this._prisma.user.findMany({
       where,
-      include: UserService._include,
+      ...userInclude,
     });
     return users;
   }
@@ -27,7 +22,7 @@ class UserService {
   async findOne(where: Prisma.UserWhereUniqueInput) {
     const user = await this._prisma.user.findUnique({
       where,
-      include: UserService._include,
+      ...userInclude,
     });
     if (!user) throw new Error("Not Found");
     return user;
@@ -37,7 +32,7 @@ class UserService {
     console.log(data);
     const user = await this._prisma.user.findUnique({
       where: { id: 1 },
-      include: UserService._include,
+      ...userInclude,
     });
     if (!user) throw new Error("Not Found");
     return user;
@@ -47,14 +42,14 @@ class UserService {
     return await this._prisma.user.update({
       where: { id },
       data,
-      include: UserService._include,
+      ...userInclude,
     });
   }
 
   async delete(id: number) {
     return await this._prisma.user.delete({
       where: { id },
-      include: UserService._include,
+      ...userInclude,
     });
   }
 }

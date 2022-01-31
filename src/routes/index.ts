@@ -4,3 +4,4 @@ export { default as courseRoute } from "./course/course.controller";
 export { default as userRoute } from "./user/user.controller";
 export { default as feedbackCategoryRoute } from "./feedback-category/feedback-category.controller";
 export { default as feedbackRoute } from "./feedback/feedback.controller";
+export { default as submissionRoute } from "./submission/submission.controller";

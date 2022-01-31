@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import fp from "fastify-plugin";
+import { assignmentInclude } from "./entities/assignment.entity";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -10,12 +11,10 @@ declare module "fastify" {
 class AssignmentService {
   constructor(private readonly _prisma: PrismaClient) {}
 
-  private static _include = { feedbackCategories: true };
-
   async findAll(where: Prisma.AssignmentWhereInput) {
     const assignments = await this._prisma.assignment.findMany({
       where,
-      include: AssignmentService._include,
+      ...assignmentInclude,
     });
     return assignments;
   }
@@ -23,7 +22,7 @@ class AssignmentService {
   async findOne(where: Prisma.AssignmentWhereUniqueInput) {
     const assignment = await this._prisma.assignment.findUnique({
       where,
-      include: AssignmentService._include,
+      ...assignmentInclude,
     });
     if (!assignment) throw new Error("Not Found");
     return assignment;
@@ -32,7 +31,7 @@ class AssignmentService {
   async create(data: Prisma.AssignmentCreateInput) {
     const assignment = await this._prisma.assignment.create({
       data,
-      include: AssignmentService._include,
+      ...assignmentInclude,
     });
     if (!assignment) throw new Error("Not Found");
     return assignment;
@@ -42,14 +41,14 @@ class AssignmentService {
     return await this._prisma.assignment.update({
       where: { id },
       data,
-      include: AssignmentService._include,
+      ...assignmentInclude,
     });
   }
 
   async delete(id: number) {
     return await this._prisma.assignment.delete({
       where: { id },
-      include: AssignmentService._include,
+      ...assignmentInclude,
     });
   }
 }

@@ -5,7 +5,13 @@ import {
 import { Static, Type } from "@sinclair/typebox";
 import { Assignment, AssignmentType, Prisma } from "@prisma/client";
 
-type AssignmentExtended = Assignment & {
+export const assignmentInclude = {
+  include: {
+    feedbackCategories: true,
+  },
+};
+
+export type AssignmentExtended = Assignment & {
   feedbackCategories: FeedbackCategoryEntity[];
 };
 

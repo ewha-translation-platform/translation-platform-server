@@ -1,6 +1,14 @@
 import { Role, User } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
 
+export const userInclude = {
+  include: {
+    department: {
+      select: { name: true, college: { select: { name: true } } },
+    },
+  },
+};
+
 export type UserExtended = User & {
   department: { name: string; college: { name: string } };
 };

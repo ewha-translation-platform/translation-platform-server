@@ -6,11 +6,19 @@ import {
   UserEntity,
   UserEntitySchema,
   UserExtended,
+  userInclude,
 } from "@/routes/user/entities/user.entity";
 import { Feedback, FeedbackCategory, Prisma } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
 
-type FeedbackExtended = Feedback & {
+export const feedbackInclude = {
+  include: {
+    professor: { ...userInclude },
+    categories: true,
+  },
+};
+
+export type FeedbackExtended = Feedback & {
   professor: UserExtended;
   categories: FeedbackCategory[];
 };
