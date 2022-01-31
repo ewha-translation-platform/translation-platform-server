@@ -1,11 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { AssignmentType } from "@prisma/client";
 
-export const FeedbackCategoryEntitySchema = Type.Object({
-  id: Type.Integer(),
-  name: Type.String(),
-});
-
 export const CreateAssignmentDtoSchema = Type.Object({
   classId: Type.Integer(),
   name: Type.String(),
