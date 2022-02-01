@@ -137,22 +137,25 @@ model Assignment {
 }
 
 model Submission {
-  id              Int        @id @default(autoincrement())
-  student         User       @relation(fields: [studentId], references: [id])
-  assignment      Assignment @relation(fields: [assignmentId], references: [id])
-  textFile        String     @map("text_file") @db.Text
-  audioFile       Bytes?     @map("audio_file") @db.MediumBlob
-  playCount       Int?       @map("play_count")
-  playbackRate    Float?     @map("playback_rate")
-  staged          Boolean    @default(false)
-  generalReview   String?    @map("general_review") @db.Text
-  score           Int?
-  feedbacks       Feedback[]
-  graded          Boolean    @default(false)
-  updatedDateTime DateTime   @updatedAt @map("updated_datetime")
+  id               Int         @id @default(autoincrement())
+  student          User        @relation(fields: [studentId], references: [id])
+  assignment       Assignment  @relation(fields: [assignmentId], references: [id])
+  textFile         String      @map("text_file") @db.Text
+  audioFile        Bytes?      @map("audio_file") @db.MediumBlob
+  playCount        Int?        @map("play_count")
+  playbackRate     Float?      @map("playback_rate")
+  staged           Boolean     @default(false)
+  generalReview    String?     @map("general_review") @db.Text
+  score            Int?
+  feedbacks        Feedback[]
+  graded           Boolean     @default(false)
+  updatedDateTime  DateTime    @updatedAt @map("updated_datetime")
+  stagedSubmission Submission? @relation("stage_submission", fields: [stagedSubmissionId], references: [id])
+  draftSubmission  Submission? @relation("stage_submission")
 
-  studentId    Int @map("student_id")
-  assignmentId Int @map("assignment_id")
+  studentId          Int  @map("student_id")
+  assignmentId       Int  @map("assignment_id")
+  stagedSubmissionId Int? @unique @map("staged_submission_id")
 
   @@unique([assignmentId, studentId, staged])
   @@map("submission")
@@ -163,13 +166,16 @@ model Feedback {
   submission         Submission         @relation(fields: [submissionId], references: [id])
   professor          User               @relation(fields: [professorId], references: [id])
   selectedIdx        Json               @map("selected_idx")
-  selectedSourceText Boolean            @default(false) @map("seletedSourceText")
+  selectedSourceText Boolean            @default(false) @map("seleted_source_text")
   comment            String?
   categories         FeedbackCategory[] @relation("categories_on_feedback")
-  staged             Boolean            @default(false)
+  staged             Boolean
+  stagedFeedback     Feedback?          @relation("stage_feedback", fields: [stagedFeedbackId], references: [id])
+  draftFeedback      Feedback?          @relation("stage_feedback")
 
-  submissionId Int @map("submission_id")
-  professorId  Int @map("professor_id")
+  submissionId     Int  @map("submission_id")
+  professorId      Int  @map("professor_id")
+  stagedFeedbackId Int? @unique @map("staged_feedback_id")
 
   @@map("feedback")
 }
