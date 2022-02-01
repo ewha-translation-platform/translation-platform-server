@@ -12,11 +12,8 @@ import {
   FeedbackCategoryEntity,
   FeedbackCategoryEntitySchema,
 } from "./entities/feedback-category.entity";
-import feedbackCategoryService from "./feedback-category.service";
 
 export default async function (server: FastifyInstance) {
-  await server.register(feedbackCategoryService);
-
   server.get("/", {
     schema: {
       response: { 200: Type.Array(FeedbackCategoryEntitySchema) },

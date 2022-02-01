@@ -1,22 +1,19 @@
-import {
-  UpdateSubmissionDto,
-  UpdateSubmissionDtoSchema,
-} from "./dto/update-submission.dto";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
-import submissionService from "./submission.service";
 import {
   CreateSubmissionDto,
   CreateSubmissionDtoSchema,
 } from "./dto/create-submission.dto";
+import {
+  UpdateSubmissionDto,
+  UpdateSubmissionDtoSchema,
+} from "./dto/update-submission.dto";
 import {
   SubmissionEntity,
   SubmissionEntitySchema,
 } from "./entities/submission.entity";
 
 export default async function (server: FastifyInstance) {
-  await server.register(submissionService);
-
   server.get("/", {
     schema: {
       response: { 200: Type.Array(SubmissionEntitySchema) },

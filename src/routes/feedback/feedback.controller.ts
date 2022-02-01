@@ -1,22 +1,19 @@
-import {
-  UpdateFeedbackDto,
-  UpdateFeedbackDtoSchema,
-} from "./dto/update-feedback.dto";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
-import feedbackService from "./feedback.service";
 import {
   CreateFeedbackDto,
   CreateFeedbackDtoSchema,
 } from "./dto/create-feedback.dto";
+import {
+  UpdateFeedbackDto,
+  UpdateFeedbackDtoSchema,
+} from "./dto/update-feedback.dto";
 import {
   FeedbackEntity,
   FeedbackEntitySchema,
 } from "./entities/feedback.entity";
 
 export default async function (server: FastifyInstance) {
-  await server.register(feedbackService);
-
   server.get("/", {
     schema: {
       response: { 200: Type.Array(FeedbackEntitySchema) },

@@ -1,19 +1,16 @@
-import {
-  UpdateCourseDto,
-  UpdateCourseDtoSchema,
-} from "./dto/update-course.dto";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
-import courseService from "./course.service";
 import {
   CreateCourseDto,
   CreateCourseDtoSchema,
 } from "./dto/create-course.dto";
+import {
+  UpdateCourseDto,
+  UpdateCourseDtoSchema,
+} from "./dto/update-course.dto";
 import { CourseEntity, CourseEntitySchema } from "./entities/course.entity";
 
 export default async function (server: FastifyInstance) {
-  await server.register(courseService);
-
   server.get("/", {
     schema: {
       response: { 200: Type.Array(CourseEntitySchema) },

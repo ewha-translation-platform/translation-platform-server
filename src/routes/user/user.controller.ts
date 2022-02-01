@@ -3,11 +3,8 @@ import { FastifyInstance } from "fastify";
 import { CreateUserDto, CreateUserDtoSchema } from "./dto/create-user.dto";
 import { UpdateUserDto, UpdateUserDtoSchema } from "./dto/update-user.dto";
 import { UserEntity, UserEntitySchema } from "./entities/user.entity";
-import userService from "./user.service";
 
 export default async function (server: FastifyInstance) {
-  await server.register(userService);
-
   server.get("/", {
     schema: {
       response: { 200: Type.Array(UserEntitySchema) },
