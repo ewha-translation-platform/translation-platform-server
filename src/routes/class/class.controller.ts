@@ -1,13 +1,12 @@
-import { UpdateClassDto, UpdateClassDtoSchema } from "./dto/update-class.dto";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
-import classService from "./class.service";
+import { UserEntity } from "@/routes/user/entities/user.entity";
+import { AssignmentEntity } from "@/routes/assignment/entities/assignment.entity";
 import { CreateClassDto, CreateClassDtoSchema } from "./dto/create-class.dto";
+import { UpdateClassDto, UpdateClassDtoSchema } from "./dto/update-class.dto";
 import { ClassEntity, ClassEntitySchema } from "./entities/class.entity";
 
 export default async function (server: FastifyInstance) {
-  await server.register(classService);
-
   server.get("/", {
     schema: {
       response: { 200: Type.Array(ClassEntitySchema) },
@@ -60,6 +59,26 @@ export default async function (server: FastifyInstance) {
     async handler({ params: { id } }): Promise<ClassEntity> {
       const data = await server.classService.delete(id);
       return new ClassEntity(data);
+    },
+  });
+
+  server.get<{ Params: Params }>("/:id/students", {
+    schema: { params: ParamsSchema },
+    async handler({ params: { id } }, reply): Promise<UserEntity[]> {
+      const data = await server.userService.findAll({
+        attendingClass: { some: { classId: id } },
+      });
+      if (!data) return reply.code(404);
+      return data.map((d) => new UserEntity(d));
+    },
+  });
+
+  server.get<{ Params: Params }>("/:id/assignments", {
+    schema: { params: ParamsSchema },
+    async handler({ params: { id } }, reply): Promise<AssignmentEntity[]> {
+      const data = await server.assignmentService.findAll({ classId: id });
+      if (!data) return reply.code(404);
+      return data.map((d) => new AssignmentEntity(d));
     },
   });
 }

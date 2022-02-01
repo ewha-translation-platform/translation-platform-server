@@ -1,6 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
-import assignmentService from "./assignment.service";
 import {
   CreateAssignmentDto,
   CreateAssignmentDtoSchema,
@@ -15,8 +14,6 @@ import {
 } from "./entities/assignment.entity";
 
 export default async function (server: FastifyInstance) {
-  await server.register(assignmentService);
-
   server.get("/", {
     schema: {
       response: { 200: Type.Array(AssignmentEntitySchema) },
@@ -72,6 +69,44 @@ export default async function (server: FastifyInstance) {
     async handler({ params: { id } }): Promise<AssignmentEntity> {
       const data = await server.assignmentService.delete(id);
       return new AssignmentEntity(data);
+    },
+  });
+
+  server.get<{ Params: Params }>("/:id/submissions", {
+    schema: { params: ParamsSchema },
+    async handler({ params: { id } }): Promise<any> {
+      const submittedStudents = await server.prisma.user.findMany({
+        where: {
+          attendingClass: {
+            some: { class: { assignments: { some: { id } } } },
+          },
+        },
+        select: {
+          academicId: true,
+          firstName: true,
+          lastName: true,
+          submissions: {
+            where: { assignmentId: id, staged: false },
+            include: { stagedSubmission: true },
+          },
+        },
+      });
+
+      return submittedStudents.map((s) => {
+        const submission = s.submissions.length === 0 ? null : s.submissions[0];
+        const stagedSubmission = submission?.stagedSubmission || null;
+
+        return {
+          academicId: s.academicId,
+          submissionId: stagedSubmission?.id || null,
+          firstName: s.firstName,
+          lastName: s.lastName,
+          isGraded: stagedSubmission?.graded || false,
+          playCount: stagedSubmission?.playCount || null,
+          submissionDateTime:
+            stagedSubmission?.updatedDateTime.toISOString() || null,
+        };
+      });
     },
   });
 }
