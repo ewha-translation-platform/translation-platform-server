@@ -51,6 +51,25 @@ class AssignmentService {
       ...assignmentInclude,
     });
   }
+
+  async getSubmissions(id: number) {
+    return await this._prisma.user.findMany({
+      where: {
+        attendingClass: {
+          some: { class: { assignments: { some: { id } } } },
+        },
+      },
+      select: {
+        academicId: true,
+        firstName: true,
+        lastName: true,
+        submissions: {
+          where: { assignmentId: id, staged: false },
+          include: { stagedSubmission: true },
+        },
+      },
+    });
+  }
 }
 
 export default fp(async (server) => {

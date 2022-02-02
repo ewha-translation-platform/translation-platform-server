@@ -12,6 +12,10 @@ import {
   AssignmentEntity,
   AssignmentEntitySchema,
 } from "./entities/assignment.entity";
+import {
+  SubmissionStatusEntity,
+  SubmissionStatusEntitySchema,
+} from "./entities/submission-status.entity";
 
 export default async function (server: FastifyInstance) {
   server.get("/", {
@@ -73,35 +77,21 @@ export default async function (server: FastifyInstance) {
   });
 
   server.get<{ Params: Params }>("/:id/submissions", {
-    schema: { params: ParamsSchema },
-    async handler({ params: { id } }): Promise<any> {
-      const submittedStudents = await server.prisma.user.findMany({
-        where: {
-          attendingClass: {
-            some: { class: { assignments: { some: { id } } } },
-          },
-        },
-        select: {
-          academicId: true,
-          firstName: true,
-          lastName: true,
-          submissions: {
-            where: { assignmentId: id, staged: false },
-            include: { stagedSubmission: true },
-          },
-        },
-      });
+    schema: {
+      params: ParamsSchema,
+      response: { 200: Type.Array(SubmissionStatusEntitySchema) },
+    },
+    async handler({ params: { id } }): Promise<SubmissionStatusEntity[]> {
+      const data = await server.assignmentService.getSubmissions(id);
 
-      return submittedStudents.map((s) => {
-        const submission = s.submissions.length === 0 ? null : s.submissions[0];
+      return data.map((d) => {
+        const submission = d.submissions.length === 0 ? null : d.submissions[0];
         const stagedSubmission = submission?.stagedSubmission || null;
 
         return {
-          academicId: s.academicId,
+          ...d,
           submissionId: stagedSubmission?.id || null,
-          firstName: s.firstName,
-          lastName: s.lastName,
-          isGraded: stagedSubmission?.graded || false,
+          graded: stagedSubmission?.graded || false,
           playCount: stagedSubmission?.playCount || null,
           submissionDateTime:
             stagedSubmission?.updatedDateTime.toISOString() || null,
