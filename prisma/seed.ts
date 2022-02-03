@@ -25,7 +25,7 @@ async function main() {
   await prisma.user.createMany({
     data: [
       {
-        academicId: "2022000000",
+        id: "2022000000",
         departmentId: 1,
         email: "test@test.com",
         password: "password",
@@ -35,7 +35,7 @@ async function main() {
         role: "PROFESSOR",
       },
       {
-        academicId: "2022000001",
+        id: "2022000001",
         departmentId: 1,
         email: "test1@test.com",
         password: "password",
@@ -45,7 +45,7 @@ async function main() {
         role: "STUDENT",
       },
       {
-        academicId: "2022000002",
+        id: "2022000002",
         departmentId: 1,
         email: "test2@test.com",
         password: "password",
@@ -55,7 +55,7 @@ async function main() {
         role: "STUDENT",
       },
       {
-        academicId: "2022000003",
+        id: "2022000003",
         departmentId: 1,
         email: "test3@test.com",
         password: "password",
@@ -107,13 +107,13 @@ async function main() {
       courseId: 1,
       classNumber: 1,
       professors: {
-        create: [{ professor: { connect: { id: 1 } } }],
+        create: [{ professor: { connect: { id: "2022000000" } } }],
       },
       students: {
         create: [
-          { student: { connect: { id: 2 } } },
-          { student: { connect: { id: 3 } } },
-          { student: { connect: { id: 4 } } },
+          { student: { connect: { id: "2022000001" } } },
+          { student: { connect: { id: "2022000002" } } },
+          { student: { connect: { id: "2022000003" } } },
         ],
       },
       assignments: {
@@ -136,13 +136,13 @@ async function main() {
       courseId: 3,
       classNumber: 1,
       professors: {
-        create: [{ professor: { connect: { id: 1 } } }],
+        create: [{ professor: { connect: { id: "2022000000" } } }],
       },
       students: {
         create: [
-          { student: { connect: { id: 2 } } },
-          { student: { connect: { id: 3 } } },
-          { student: { connect: { id: 4 } } },
+          { student: { connect: { id: "2022000001" } } },
+          { student: { connect: { id: "2022000002" } } },
+          { student: { connect: { id: "2022000003" } } },
         ],
       },
       assignments: {
@@ -176,13 +176,13 @@ async function main() {
       textFile:
         "翌日のことが頭をよぎり、どことなく晴れ晴れしい気分になれない「日曜の夜」を過ごしてきた多くの人が、さかいまさと堺 雅 人主演の「はんざわなおき半沢直樹」のおかげで今、テレビに前のめりになっているだろう。素晴らしいドラマは私たちの気持ちを鼓舞し、日々の生活に大きな影響さえ与える。エンターテインメントは「必要不可欠」なものだ。並々ならぬ半沢ファンを自負する私だが、正直なところ今回は前回ほどの話題作となるのか、少々心配もしていた。前作から７年間のブランクは長すぎたのでは？という気もしたし、コロナ社会に生きる私たちにとって、勧善懲悪を痛快に打ち出す半沢の「倍返し」的世界観が、響きにくくなっているのではないか？という思いがぬぐえずにいた。だが、すでに多くの読者がご存じのとおり、全く杞憂だった。ドラマの内容はもちろん、演者、作り手、全てのスタッフが一丸となり、視聴者に喜んでもらえる作品を",
       assignment: { connect: { id: 1 } },
-      student: { connect: { id: 2 } },
+      student: { connect: { id: "2022000001" } },
       stagedSubmission: {
         create: {
           textFile:
             "翌日のことが頭をよぎり、どことなく晴れ晴れしい気分になれない「日曜の夜」を過ごしてきた多くの人が、さかいまさと堺 雅 人主演の「はんざわなおき半沢直樹」のおかげで今、テレビに前のめりになっているだろう。素晴らしいドラマは私たちの気持ちを鼓舞し、日々の生活に大きな影響さえ与える。エンターテインメントは「必要不可欠」なものだ。並々ならぬ半沢ファンを自負する私だが、正直なところ今回は前回ほどの話題作となるのか、少々心配もしていた。前作から７年間のブランクは長すぎたのでは？という気もしたし、コロナ社会に生きる私たちにとって、勧善懲悪を痛快に打ち出す半沢の「倍返し」的世界観が、響きにくくなっているのではないか？という思いがぬぐえずにいた。だが、すでに多くの読者がご存じのとおり、全く杞憂だった。ドラマの内容はもちろん、演者、作り手、全てのスタッフが一丸となり、視聴者に喜んでもらえる作品を提供しようとする「熱」が、ひとつひとつのシーンににじんでいる。今、「半沢直樹」を心の応援旗として、日々を頑張る人も多いだろう。これだけの作品となれば、アンチも増える。ＳＮＳを通じてあらを探すことを生きがい（？）とする人もいるようだ。だが、それもありだろう。大いに語りあい、さらに盛り上がっていけばいい。",
           assignment: { connect: { id: 1 } },
-          student: { connect: { id: 2 } },
+          student: { connect: { id: "2022000001" } },
           staged: true,
         },
       },
@@ -191,7 +191,7 @@ async function main() {
 
   await prisma.feedback.create({
     data: {
-      professor: { connect: { id: 1 } },
+      professor: { connect: { id: "2022000000" } },
       selectedIdx: { start: 0, end: 10 },
       comment: "피드백 코맨트",
       selectedSourceText: false,
