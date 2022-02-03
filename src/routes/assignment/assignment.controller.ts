@@ -90,6 +90,7 @@ export default async function (server: FastifyInstance) {
 
         return {
           ...d,
+          studentId: d.id,
           submissionId: stagedSubmission?.id || null,
           graded: stagedSubmission?.graded || false,
           playCount: stagedSubmission?.playCount || null,

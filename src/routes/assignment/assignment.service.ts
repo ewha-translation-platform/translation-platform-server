@@ -60,7 +60,7 @@ class AssignmentService {
         },
       },
       select: {
-        academicId: true,
+        id: true,
         firstName: true,
         lastName: true,
         submissions: {

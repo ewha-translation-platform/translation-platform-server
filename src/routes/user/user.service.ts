@@ -29,16 +29,14 @@ class UserService {
   }
 
   async create(data: Prisma.UserCreateInput) {
-    console.log(data);
-    const user = await this._prisma.user.findUnique({
-      where: { id: 1 },
+    const user = await this._prisma.user.create({
+      data,
       ...userInclude,
     });
-    if (!user) throw new Error("Not Found");
     return user;
   }
 
-  async update(id: number, data: Prisma.UserUpdateInput) {
+  async update(id: string, data: Prisma.UserUpdateInput) {
     return await this._prisma.user.update({
       where: { id },
       data,
@@ -46,7 +44,7 @@ class UserService {
     });
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     return await this._prisma.user.delete({
       where: { id },
       ...userInclude,

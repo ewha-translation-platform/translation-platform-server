@@ -14,8 +14,7 @@ export type UserExtended = User & {
 };
 
 export const UserEntitySchema = Type.Object({
-  id: Type.Integer(),
-  academicId: Type.String(),
+  id: Type.String(),
   firstName: Type.String(),
   lastName: Type.String(),
   email: Type.String(),
@@ -26,8 +25,7 @@ export const UserEntitySchema = Type.Object({
 });
 
 export class UserEntity implements Static<typeof UserEntitySchema> {
-  id: number;
-  academicId: string;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -38,7 +36,6 @@ export class UserEntity implements Static<typeof UserEntitySchema> {
 
   constructor(user: UserExtended) {
     this.id = user.id;
-    this.academicId = user.academicId;
     this.firstName = user.firstName;
     this.lastName = user.lastName;
     this.email = user.email;

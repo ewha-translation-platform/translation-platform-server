@@ -36,10 +36,18 @@ export default async function (server: FastifyInstance) {
       response: { 201: ClassEntitySchema },
     },
     async handler({ body }, reply): Promise<ClassEntity> {
-      const { courseId, ...rest } = body;
+      const { courseId, studentIds, professorIds, ...rest } = body;
       const data = await server.classService.create({
         ...rest,
         course: { connect: { id: courseId } },
+        students: {
+          create: studentIds.map((id) => ({ student: { connect: { id } } })),
+        },
+        professors: {
+          create: professorIds.map((id) => ({
+            professor: { connect: { id } },
+          })),
+        },
       });
       reply.code(201);
       return new ClassEntity(data);
@@ -72,6 +80,19 @@ export default async function (server: FastifyInstance) {
       return data.map((d) => new UserEntity(d));
     },
   });
+
+  server.post<{ Params: Params; Body: { academicIds: string[] } }>(
+    "/:id/students",
+    {
+      schema: {
+        params: ParamsSchema,
+        body: Type.Object({ academicIds: Type.Array(Type.String()) }),
+      },
+      async handler({ params: { id }, body }) {
+        return { ok: true };
+      },
+    }
+  );
 
   server.get<{ Params: Params }>("/:id/assignments", {
     schema: { params: ParamsSchema },

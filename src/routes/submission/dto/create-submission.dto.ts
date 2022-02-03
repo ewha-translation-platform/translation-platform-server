@@ -1,7 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 
 export const CreateSubmissionDtoSchema = Type.Object({
-  studentId: Type.Integer(),
+  studentId: Type.String(),
   assignmentId: Type.Integer(),
   textFile: Type.String(),
   staged: Type.Boolean(),

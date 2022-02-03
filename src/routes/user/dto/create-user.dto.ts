@@ -2,7 +2,7 @@ import { Role } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
 
 export const CreateUserDtoSchema = Type.Object({
-  academicId: Type.String(),
+  id: Type.String(),
   firstName: Type.String(),
   lastName: Type.String(),
   email: Type.String({ format: "email" }),
