@@ -1,3 +1,3 @@
 export { default as prismaPlugin } from "./prisma";
-export { default as fastifyEnv } from "fastify-env";
+export { fastifyEnv, fastifyEnvOpt } from "./config";
 export { default as fastifyHelmet } from "fastify-helmet";

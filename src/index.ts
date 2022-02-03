@@ -1,5 +1,9 @@
-import envOpt from "@/config";
-import { fastifyEnv, fastifyHelmet, prismaPlugin } from "@/plugins";
+import {
+  fastifyEnv,
+  fastifyEnvOpt,
+  fastifyHelmet,
+  prismaPlugin,
+} from "@/plugins";
 import {
   assignmentRoute,
   classRoute,
@@ -10,6 +14,7 @@ import {
   submissionRoute,
   userRoute,
 } from "@/routes";
+import { Prisma } from "@prisma/client";
 import Fastify from "fastify";
 import fastifyCors from "fastify-cors";
 import middie from "middie";
@@ -18,13 +23,18 @@ import morgan from "morgan";
 async function bootstrap() {
   const server = Fastify();
 
-  server.register(fastifyCors);
-  server.register(fastifyHelmet);
-  server.register(fastifyEnv, envOpt);
-  server.register(prismaPlugin);
+  await server.register(fastifyEnv, fastifyEnvOpt);
+
+  if (server.config.ENV === "prod") {
+    server.register(fastifyHelmet);
+  } else {
+    server.register(fastifyCors);
+  }
+
   await server.register(middie);
   server.use(morgan("dev"));
 
+  await server.register(prismaPlugin);
   await server.register(routeServices);
   server.register(userRoute, { prefix: "/users" });
   server.register(courseRoute, { prefix: "/courses" });
@@ -33,6 +43,12 @@ async function bootstrap() {
   server.register(feedbackCategoryRoute, { prefix: "/feedback-categories" });
   server.register(feedbackRoute, { prefix: "/feedbacks" });
   server.register(submissionRoute, { prefix: "/submissions" });
+
+  server.setErrorHandler((error, request, reply) => {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      reply.status(500).send({ isPrismaError: true, error });
+    } else reply.status(500).send(error);
+  });
 
   await server.ready();
   await server.listen(server.config.PORT, "0.0.0.0");
