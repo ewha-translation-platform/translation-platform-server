@@ -57,8 +57,14 @@ export default async function (server: FastifyInstance) {
 
   server.patch<{ Params: Params; Body: UpdateFeedbackDto }>("/:id", {
     schema: { params: ParamsSchema, body: UpdateFeedbackDtoSchema },
-    async handler({ params: { id }, body }): Promise<FeedbackEntity> {
-      const data = await server.feedbackService.update(id, body);
+    async handler({
+      params: { id },
+      body: { categoryIds, ...rest },
+    }): Promise<FeedbackEntity> {
+      const data = await server.feedbackService.update(id, {
+        ...rest,
+        categories: { connect: categoryIds?.map((id) => ({ id })) || [] },
+      });
       return new FeedbackEntity(data);
     },
   });

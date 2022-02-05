@@ -180,10 +180,10 @@ model Feedback {
 }
 
 model FeedbackCategory {
-  id         Int          @id @default(autoincrement())
-  name       String       @unique
-  assignment Assignment[] @relation("categories_on_assignment")
-  feedbacks  Feedback[]   @relation("categories_on_feedback")
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  assignments Assignment[] @relation("categories_on_assignment")
+  feedbacks   Feedback[]   @relation("categories_on_feedback")
 
   @@map("feedback_category")
 }
