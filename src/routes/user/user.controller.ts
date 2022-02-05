@@ -1,3 +1,4 @@
+import { Role } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
 import { CreateUserDto, CreateUserDtoSchema } from "./dto/create-user.dto";
@@ -5,12 +6,32 @@ import { UpdateUserDto, UpdateUserDtoSchema } from "./dto/update-user.dto";
 import { UserEntity, UserEntitySchema } from "./entities/user.entity";
 
 export default async function (server: FastifyInstance) {
-  server.get("/", {
+  const QuerystringSchema = Type.Object({
+    name: Type.Optional(Type.String()),
+    role: Type.Optional(Type.Enum(Role)),
+  });
+  type Querystring = Static<typeof QuerystringSchema>;
+  server.get<{ Querystring: Querystring }>("/", {
     schema: {
+      querystring: QuerystringSchema,
       response: { 200: Type.Array(UserEntitySchema) },
     },
-    async handler(): Promise<UserEntity[]> {
-      const data = await server.userService.findAll({});
+    async handler({ query }): Promise<UserEntity[]> {
+      const data = await server.userService.findAll(
+        "name" in query && "role" in query
+          ? {
+              AND: [
+                {
+                  OR: [
+                    { firstName: { contains: query.name } },
+                    { lastName: { contains: query.name } },
+                  ],
+                },
+                { role: query.role },
+              ],
+            }
+          : {}
+      );
       return data.map((d) => new UserEntity(d));
     },
   });

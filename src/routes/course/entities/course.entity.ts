@@ -4,21 +4,28 @@ import { Static, Type } from "@sinclair/typebox";
 export const courseInclude = {
   include: {
     department: {
-      select: { name: true, college: { select: { name: true } } },
+      include: { college: true },
     },
   },
 };
 
 export type CourseExtended = Course & {
-  department: { name: string; college: { name: string } };
+  department: {
+    id: number;
+    name: string;
+    college: { id: number; name: string };
+  };
 };
 
 export const CourseEntitySchema = Type.Object({
   id: Type.Integer(),
   year: Type.Integer(),
   semester: Type.Enum(Semester),
-  department: Type.String(),
-  college: Type.String(),
+  department: Type.Object({
+    id: Type.Number(),
+    name: Type.String(),
+    college: Type.Object({ id: Type.Number(), name: Type.String() }),
+  }),
   code: Type.String(),
   name: Type.String(),
 });
@@ -27,8 +34,11 @@ export class CourseEntity implements Static<typeof CourseEntitySchema> {
   id: number;
   year: number;
   semester: Semester;
-  department: string;
-  college: string;
+  department: {
+    id: number;
+    name: string;
+    college: { id: number; name: string };
+  };
   code: string;
   name: string;
 
@@ -36,8 +46,7 @@ export class CourseEntity implements Static<typeof CourseEntitySchema> {
     this.id = course.id;
     this.year = course.year;
     this.semester = course.semester;
-    this.department = course.department.name;
-    this.college = course.department.college.name;
+    this.department = course.department;
     this.code = course.code;
     this.name = course.name;
   }

@@ -43,12 +43,12 @@ export default async function (server: FastifyInstance) {
       response: { 201: FeedbackEntitySchema },
     },
     async handler({ body }, reply): Promise<FeedbackEntity> {
-      const { submissionId, professorId, categoriyIds, ...rest } = body;
+      const { submissionId, professorId, categoryIds, ...rest } = body;
       const data = await server.feedbackService.create({
         ...rest,
         submission: { connect: { id: submissionId } },
         professor: { connect: { id: professorId } },
-        categories: { connect: categoriyIds.map((id) => ({ id })) },
+        categories: { connect: categoryIds.map((id) => ({ id })) },
       });
       reply.code(201);
       return new FeedbackEntity(data);
