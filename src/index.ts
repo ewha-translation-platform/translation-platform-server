@@ -8,6 +8,7 @@ import {
   assignmentRoute,
   classRoute,
   courseRoute,
+  departmentRoute,
   feedbackCategoryRoute,
   feedbackRoute,
   routeServices,
@@ -36,6 +37,7 @@ async function bootstrap() {
 
   await server.register(prismaPlugin);
   await server.register(routeServices);
+  server.register(departmentRoute, { prefix: "/departments" });
   server.register(userRoute, { prefix: "/users" });
   server.register(courseRoute, { prefix: "/courses" });
   server.register(classRoute, { prefix: "/classes" });
