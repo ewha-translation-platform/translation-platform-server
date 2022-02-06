@@ -12,7 +12,6 @@ export const CreateAssignmentDtoSchema = Type.Object({
   maxScore: Type.Number(),
   feedbackCategoryIds: Type.Array(Type.Integer()),
   textFile: Type.String(),
-  audioFile: Type.Union([Type.Null(), Type.Any()]),
   sequentialRegions: Type.Union([Type.Null(), Type.Any()]),
   maxPlayCount: Type.Union([Type.Null(), Type.Integer()]),
   playbackRate: Type.Union([Type.Null(), Type.Number()]),

@@ -18,6 +18,7 @@ import {
 import { Prisma } from "@prisma/client";
 import Fastify from "fastify";
 import fastifyCors from "fastify-cors";
+import fastifyMultipart from "fastify-multipart";
 import middie from "middie";
 import morgan from "morgan";
 
@@ -25,6 +26,10 @@ async function bootstrap() {
   const server = Fastify();
 
   await server.register(fastifyEnv, fastifyEnvOpt);
+  server.register(fastifyMultipart, {
+    attachFieldsToBody: true,
+    sharedSchemaId: "#multiPartSchema",
+  });
 
   if (server.config.ENV === "prod") {
     server.register(fastifyHelmet);
