@@ -1,7 +1,9 @@
 import {
+  fastifyCors,
   fastifyEnv,
   fastifyEnvOpt,
   fastifyHelmet,
+  fastifyMultipart,
   prismaPlugin,
 } from "@/plugins";
 import {
@@ -17,8 +19,6 @@ import {
 } from "@/routes";
 import { Prisma } from "@prisma/client";
 import Fastify from "fastify";
-import fastifyCors from "fastify-cors";
-import fastifyMultipart from "fastify-multipart";
 import middie from "middie";
 import morgan from "morgan";
 
