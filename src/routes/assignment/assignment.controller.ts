@@ -112,7 +112,8 @@ export default async function (server: FastifyInstance) {
 
       return data.map((d) => {
         const submission = d.submissions.length === 0 ? null : d.submissions[0];
-        const stagedSubmission = submission?.stagedSubmission || null;
+        // const stagedSubmission = submission?.stagedSubmission || null;
+        const stagedSubmission = submission;
 
         return {
           ...d,

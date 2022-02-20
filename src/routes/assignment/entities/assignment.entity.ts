@@ -24,7 +24,6 @@ export const AssignmentEntitySchema = Type.Object({
   dueDateTime: Type.String({ format: "date-time" }),
   assignmentType: Type.Enum(AssignmentType),
   isPublic: Type.Boolean(),
-  maxScore: Type.Number(),
   feedbackCategories: Type.Array(FeedbackCategoryEntitySchema),
   textFile: Type.String(),
   sequentialRegions: Type.Union([Type.Null(), Type.Any()]),
@@ -41,7 +40,6 @@ export class AssignmentEntity implements Static<typeof AssignmentEntitySchema> {
   dueDateTime: string;
   assignmentType: AssignmentType;
   isPublic: boolean;
-  maxScore: number;
   feedbackCategories: FeedbackCategoryEntity[];
   textFile: string;
 
@@ -58,7 +56,6 @@ export class AssignmentEntity implements Static<typeof AssignmentEntitySchema> {
     this.dueDateTime = assignment.dueDateTime.toISOString();
     this.assignmentType = assignment.assignmentType;
     this.isPublic = assignment.isPublic;
-    this.maxScore = assignment.maxScore;
     this.feedbackCategories = assignment.feedbackCategories;
     this.textFile = assignment.textFile;
 

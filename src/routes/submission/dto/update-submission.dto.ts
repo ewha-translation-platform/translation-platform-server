@@ -5,7 +5,6 @@ export const UpdateSubmissionDtoSchema = Type.Partial(
     textFile: Type.String(),
     staged: Type.Boolean(),
     generalReview: Type.Union([Type.Null(), Type.String()]),
-    score: Type.Union([Type.Null(), Type.Number()]),
     feedbackIds: Type.Array(Type.Integer()),
     graded: Type.Boolean(),
 

@@ -119,7 +119,6 @@ model Assignment {
   dueDateTime        DateTime           @map("due_datetime")
   assignmentType     AssignmentType     @map("assignment_type")
   isPublic           Boolean            @default(false) @map("is_public")
-  maxScore           Int                @default(100) @map("max_score")
   feedbackCategories FeedbackCategory[] @relation("categories_on_assignment")
   textFile           String             @map("text_file") @db.Text
   audioFile          Bytes?             @map("audio_file") @db.MediumBlob
@@ -145,7 +144,6 @@ model Submission {
   playbackRate     Float?      @map("playback_rate")
   staged           Boolean     @default(false)
   generalReview    String?     @map("general_review") @db.Text
-  score            Int?
   feedbacks        Feedback[]
   graded           Boolean     @default(false)
   updatedDateTime  DateTime    @updatedAt @map("updated_datetime")

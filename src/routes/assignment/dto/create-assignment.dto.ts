@@ -9,7 +9,6 @@ export const CreateAssignmentDtoSchema = Type.Object({
   dueDateTime: Type.String({ format: "date-time" }),
   assignmentType: Type.Enum(AssignmentType),
   isPublic: Type.Boolean(),
-  maxScore: Type.Number(),
   feedbackCategoryIds: Type.Array(Type.Integer()),
   textFile: Type.String(),
   sequentialRegions: Type.Union([Type.Null(), Type.Any()]),
