@@ -5,6 +5,7 @@ export const CreateAssignmentDtoSchema = Type.Object({
   classId: Type.Integer(),
   name: Type.String(),
   description: Type.String(),
+  keywords: Type.String(),
   weekNumber: Type.Integer(),
   dueDateTime: Type.String({ format: "date-time" }),
   assignmentType: Type.Enum(AssignmentType),

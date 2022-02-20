@@ -88,9 +88,30 @@ export default async function (server: FastifyInstance) {
 
   server.patch<{ Params: Params; Body: UpdateAssignmentDto }>("/:id", {
     schema: { params: ParamsSchema, body: UpdateAssignmentDtoSchema },
-    async handler({ params: { id }, body }): Promise<AssignmentEntity> {
-      const data = await server.assignmentService.update(id, body);
-      return new AssignmentEntity(data);
+    async handler({
+      params: { id },
+      body: { classId, feedbackCategoryIds, ...rest },
+    }): Promise<AssignmentEntity | any> {
+      try {
+        const assignment = await server.assignmentService.update(
+          id,
+          feedbackCategoryIds
+            ? {
+                ...rest,
+                feedbackCategories: {
+                  connect: feedbackCategoryIds.map((id) => ({ id })),
+                },
+              }
+            : rest
+        );
+        return new AssignmentEntity(assignment);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error);
+        }
+
+        return { ok: true };
+      }
     },
   });
 

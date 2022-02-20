@@ -115,6 +115,7 @@ model Assignment {
   class              Class              @relation(fields: [classId], references: [id])
   name               String
   description        String             @db.Text
+  keywords           String?
   weekNumber         Int                @map("week_number")
   dueDateTime        DateTime           @map("due_datetime")
   assignmentType     AssignmentType     @map("assignment_type")

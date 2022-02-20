@@ -20,6 +20,7 @@ export const AssignmentEntitySchema = Type.Object({
   classId: Type.Integer(),
   name: Type.String(),
   description: Type.String(),
+  keywords: Type.Union([Type.String(), Type.Null()]),
   weekNumber: Type.Integer(),
   dueDateTime: Type.String({ format: "date-time" }),
   assignmentType: Type.Enum(AssignmentType),
@@ -36,6 +37,7 @@ export class AssignmentEntity implements Static<typeof AssignmentEntitySchema> {
   classId: number;
   name: string;
   description: string;
+  keywords: string | null;
   weekNumber: number;
   dueDateTime: string;
   assignmentType: AssignmentType;
@@ -52,6 +54,7 @@ export class AssignmentEntity implements Static<typeof AssignmentEntitySchema> {
     this.classId = assignment.classId;
     this.name = assignment.name;
     this.description = assignment.description;
+    this.keywords = assignment.keywords;
     this.weekNumber = assignment.weekNumber;
     this.dueDateTime = assignment.dueDateTime.toISOString();
     this.assignmentType = assignment.assignmentType;
