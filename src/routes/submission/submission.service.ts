@@ -45,6 +45,13 @@ class SubmissionService {
     });
   }
 
+  async updateMany(ids: number[], data: Prisma.SubmissionUpdateInput) {
+    return await this._prisma.submission.updateMany({
+      data,
+      where: { id: { in: ids } },
+    });
+  }
+
   async delete(id: number) {
     return await this._prisma.submission.delete({
       where: { id },

@@ -120,6 +120,7 @@ export default async function (server: FastifyInstance) {
           studentId: d.id,
           submissionId: stagedSubmission?.id || null,
           graded: stagedSubmission?.graded || false,
+          openedToStudent: stagedSubmission?.openedToStudent || false,
           playCount: stagedSubmission?.playCount || null,
           submissionDateTime:
             stagedSubmission?.updatedDateTime.toISOString() || null,

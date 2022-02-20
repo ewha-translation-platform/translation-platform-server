@@ -146,6 +146,7 @@ model Submission {
   generalReview    String?     @map("general_review") @db.Text
   feedbacks        Feedback[]
   graded           Boolean     @default(false)
+  openedToStudent  Boolean     @default(false)
   updatedDateTime  DateTime    @updatedAt @map("updated_datetime")
   stagedSubmission Submission? @relation("stage_submission", fields: [stagedSubmissionId], references: [id])
   draftSubmission  Submission? @relation("stage_submission")

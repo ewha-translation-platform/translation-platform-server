@@ -39,6 +39,7 @@ export const SubmissionEntitySchema = Type.Object({
   assignment: AssignmentEntitySchema,
   textFile: Type.String(),
   staged: Type.Boolean(),
+  openedToStudent: Type.Boolean(),
   generalReview: Type.Union([Type.Null(), Type.String()]),
   feedbacks: Type.Array(FeedbackEntitySchema),
   graded: Type.Boolean(),
@@ -56,6 +57,7 @@ export class SubmissionEntity implements Static<typeof SubmissionEntitySchema> {
   staged: boolean;
   generalReview: string | null;
   graded: boolean;
+  openedToStudent: boolean;
 
   playCount: number | null;
   playbackRate: number | null;
@@ -69,6 +71,7 @@ export class SubmissionEntity implements Static<typeof SubmissionEntitySchema> {
     this.staged = submission.staged;
     this.generalReview = submission.generalReview;
     this.graded = submission.graded;
+    this.openedToStudent = submission.openedToStudent;
 
     this.playCount = submission.playCount;
     this.playbackRate = submission.playbackRate;

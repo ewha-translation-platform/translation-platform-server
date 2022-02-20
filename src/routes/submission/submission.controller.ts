@@ -5,6 +5,8 @@ import {
   CreateSubmissionDtoSchema,
 } from "./dto/create-submission.dto";
 import {
+  UpdateManySubmissionDto,
+  UpdateManySubmissionDtoSchema,
   UpdateSubmissionDto,
   UpdateSubmissionDtoSchema,
 } from "./dto/update-submission.dto";
@@ -85,6 +87,13 @@ export default async function (server: FastifyInstance) {
     async handler({ params: { id }, body }): Promise<SubmissionEntity> {
       const data = await server.submissionService.update(id, body);
       return new SubmissionEntity(data);
+    },
+  });
+
+  server.patch<{ Body: UpdateManySubmissionDto }>("/batch", {
+    schema: { body: UpdateManySubmissionDtoSchema },
+    async handler({ body: { ids, dto } }): Promise<{ count: number }> {
+      return await server.submissionService.updateMany(ids, dto);
     },
   });
 

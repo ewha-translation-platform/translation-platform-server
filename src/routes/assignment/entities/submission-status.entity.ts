@@ -6,6 +6,7 @@ export const SubmissionStatusEntitySchema = Type.Object({
   firstName: Type.String(),
   lastName: Type.String(),
   graded: Type.Boolean(),
+  openedToStudent: Type.Boolean(),
   playCount: Type.Union([Type.Null(), Type.Integer()]),
   submissionDateTime: Type.Union([
     Type.Null(),
