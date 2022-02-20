@@ -54,6 +54,32 @@ export default async function (server: FastifyInstance) {
     },
   });
 
+  server.get<{ Params: Params }>("/:id/audio", {
+    schema: {
+      params: ParamsSchema,
+      headers: { 200: { "Content-Type": "audio/webm" } },
+    },
+    async handler({ params: { id } }) {
+      const data = await server.prisma.submission.findUnique({
+        where: { id },
+        select: { audioFile: true },
+      });
+      if (!data?.audioFile) throw new Error("Not Found");
+
+      return data.audioFile;
+    },
+  });
+
+  server.post<{ Params: Params; Body: any }>("/:id/audio", {
+    schema: { params: ParamsSchema },
+    async handler({ params, body }) {
+      await server.submissionService.update(params.id, {
+        audioFile: await body.audioFile.toBuffer(),
+      });
+      return { ok: true };
+    },
+  });
+
   server.patch<{ Params: Params; Body: UpdateSubmissionDto }>("/:id", {
     schema: { params: ParamsSchema, body: UpdateSubmissionDtoSchema },
     async handler({ params: { id }, body }): Promise<SubmissionEntity> {

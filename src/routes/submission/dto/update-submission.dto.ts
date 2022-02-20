@@ -9,7 +9,6 @@ export const UpdateSubmissionDtoSchema = Type.Partial(
     feedbackIds: Type.Array(Type.Integer()),
     graded: Type.Boolean(),
 
-    audioFile: Type.Union([Type.Null(), Type.Any()]),
     playCount: Type.Union([Type.Null(), Type.Integer()]),
     playbackRate: Type.Union([Type.Null(), Type.Number()]),
   })

@@ -44,7 +44,6 @@ export const SubmissionEntitySchema = Type.Object({
   feedbacks: Type.Array(FeedbackEntitySchema),
   graded: Type.Boolean(),
 
-  audioFile: Type.Union([Type.Null(), Type.Any()]),
   playCount: Type.Union([Type.Null(), Type.Integer()]),
   playbackRate: Type.Union([Type.Null(), Type.Number()]),
 });
@@ -60,7 +59,6 @@ export class SubmissionEntity implements Static<typeof SubmissionEntitySchema> {
   generalReview: string | null;
   graded: boolean;
 
-  audioFile: Buffer | null;
   playCount: number | null;
   playbackRate: number | null;
 
@@ -75,7 +73,6 @@ export class SubmissionEntity implements Static<typeof SubmissionEntitySchema> {
     this.generalReview = submission.generalReview;
     this.graded = submission.graded;
 
-    this.audioFile = submission.audioFile;
     this.playCount = submission.playCount;
     this.playbackRate = submission.playbackRate;
   }
