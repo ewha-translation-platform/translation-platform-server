@@ -4,6 +4,7 @@ import {
   fastifyEnvOpt,
   fastifyHelmet,
   fastifyMultipart,
+  fastifySwagger,
   prismaPlugin,
 } from "@/plugins";
 import {
@@ -41,20 +42,31 @@ async function bootstrap() {
   server.use(morgan("dev"));
 
   await server.register(prismaPlugin);
+
+  server.register(fastifySwagger, {
+    exposeRoute: true,
+    routePrefix: "/doc",
+    swagger: { info: { title: "Translation Platform", version: "0.1.0" } },
+  });
+
   await server.register(routeServices);
-  server.register(departmentRoute, { prefix: "/departments" });
-  server.register(userRoute, { prefix: "/users" });
-  server.register(courseRoute, { prefix: "/courses" });
-  server.register(classRoute, { prefix: "/classes" });
-  server.register(assignmentRoute, { prefix: "/assignments" });
-  server.register(feedbackCategoryRoute, { prefix: "/feedback-categories" });
-  server.register(feedbackRoute, { prefix: "/feedbacks" });
-  server.register(submissionRoute, { prefix: "/submissions" });
+  server.register(departmentRoute, { prefix: "/api/departments" });
+  server.register(userRoute, { prefix: "/api/users" });
+  server.register(courseRoute, { prefix: "/api/courses" });
+  server.register(classRoute, { prefix: "/api/classes" });
+  server.register(assignmentRoute, { prefix: "/api/assignments" });
+  server.register(feedbackCategoryRoute, {
+    prefix: "/api/feedback-categories",
+  });
+  server.register(feedbackRoute, { prefix: "/api/feedbacks" });
+  server.register(submissionRoute, { prefix: "/api/submissions" });
 
   server.setErrorHandler((error, request, reply) => {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       reply.status(500).send({ isPrismaError: true, error });
-    } else reply.status(500).send(error);
+    } else {
+      reply.status(500).send(error);
+    }
   });
 
   await server.ready();
