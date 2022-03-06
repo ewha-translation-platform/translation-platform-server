@@ -17,7 +17,6 @@ export const UserEntitySchema = Type.Object({
   id: Type.String(),
   firstName: Type.String(),
   lastName: Type.String(),
-  email: Type.String(),
   department: Type.String(),
   college: Type.String(),
   role: Type.Enum(Role),
@@ -28,7 +27,6 @@ export class UserEntity implements Static<typeof UserEntitySchema> {
   id: string;
   firstName: string;
   lastName: string;
-  email: string;
   department: string;
   college: string;
   role: Role;
@@ -38,7 +36,6 @@ export class UserEntity implements Static<typeof UserEntitySchema> {
     this.id = user.id;
     this.firstName = user.firstName;
     this.lastName = user.lastName;
-    this.email = user.email;
     this.department = user.department.name;
     this.college = user.department.college.name;
     this.role = user.role;

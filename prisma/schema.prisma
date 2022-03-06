@@ -31,8 +31,8 @@ model User {
   id               String                    @id
   firstName        String                    @map("first_name")
   lastName         String                    @map("last_name")
-  email            String                    @unique
   password         String
+  tokenVersion     Int                       @default(0) @map("token_version")
   department       Department                @relation(fields: [departmentId], references: [id])
   isAdmin          Boolean                   @map("is_admin")
   role             Role
