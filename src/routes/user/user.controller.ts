@@ -1,9 +1,9 @@
 import { Role } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
-import { CreateUserDto, CreateUserDtoSchema } from "./dto/create-user.dto";
 import { UpdateUserDto, UpdateUserDtoSchema } from "./dto/update-user.dto";
 import { UserEntity, UserEntitySchema } from "./entities/user.entity";
+import { NotFound } from "http-errors";
 
 export default async function (server: FastifyInstance) {
   const QuerystringSchema = Type.Object({
@@ -44,25 +44,9 @@ export default async function (server: FastifyInstance) {
       response: { 200: UserEntitySchema },
     },
     async handler({ params: { id } }): Promise<UserEntity> {
-      const data = await server.userService.findOne({ id });
-      return new UserEntity(data);
-    },
-  });
-
-  server.post<{ Body: CreateUserDto }>("/", {
-    schema: {
-      body: CreateUserDtoSchema,
-      response: { 201: UserEntitySchema },
-    },
-    async handler({ body }, reply): Promise<UserEntity> {
-      const { departmentId, ...rest } = body;
-      const data = await server.userService.create({
-        ...rest,
-        department: { connect: { id: departmentId } },
-        isAdmin: false,
-      });
-      reply.code(201);
-      return new UserEntity(data);
+      const user = await server.userService.findOne({ id });
+      if (!user) throw new NotFound("user not found");
+      return new UserEntity(user);
     },
   });
 

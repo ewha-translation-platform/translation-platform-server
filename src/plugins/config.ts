@@ -4,6 +4,9 @@ import { Type, Static } from "@sinclair/typebox";
 const schema = Type.Object({
   PORT: Type.Number(),
   ENV: Type.Union([Type.Literal("prod"), Type.Literal("dev")]),
+  JWT_TOKEN_SECRET: Type.String(),
+  ACCESS_TOKEN_EXPIRATION_TIME: Type.Number(),
+  REFRESH_TOKEN_EXPIRATION_TIME: Type.Number(),
 });
 
 declare module "fastify" {

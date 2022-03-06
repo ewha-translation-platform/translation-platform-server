@@ -24,7 +24,6 @@ class UserService {
       where,
       ...userInclude,
     });
-    if (!user) throw new Error("Not Found");
     return user;
   }
 

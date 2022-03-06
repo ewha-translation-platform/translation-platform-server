@@ -11,6 +11,7 @@ export default async function (server: FastifyInstance) {
     schema: {
       response: { 200: Type.Array(ClassEntitySchema) },
     },
+    preHandler: server.auth([server.verifyAccessToken]),
     async handler(): Promise<ClassEntity[]> {
       const data = await server.classService.findAll({});
       return data.map((d) => new ClassEntity(d));

@@ -1,6 +1,10 @@
+export { default as fastifyAuth } from "fastify-auth";
+export { default as fastifyBcrypt } from "fastify-bcrypt";
+export { default as fastifyCookie } from "fastify-cookie";
 export { default as fastifyCors } from "fastify-cors";
 export { default as fastifyHelmet } from "fastify-helmet";
 export { default as fastifyMultipart } from "fastify-multipart";
 export { default as fastifySwagger } from "fastify-swagger";
+export { default as authPlugin } from "./auth";
 export { fastifyEnv, fastifyEnvOpt } from "./config";
 export { default as prismaPlugin } from "./prisma";

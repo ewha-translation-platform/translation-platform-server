@@ -1,4 +1,7 @@
 import {
+  authPlugin,
+  fastifyBcrypt,
+  fastifyCookie,
   fastifyCors,
   fastifyEnv,
   fastifyEnvOpt,
@@ -9,6 +12,7 @@ import {
 } from "@/plugins";
 import {
   assignmentRoute,
+  authRoute,
   classRoute,
   courseRoute,
   departmentRoute,
@@ -18,8 +22,8 @@ import {
   submissionRoute,
   userRoute,
 } from "@/routes";
-import { Prisma } from "@prisma/client";
 import Fastify from "fastify";
+import { BadRequest, NotFound, Unauthorized, Forbidden } from "http-errors";
 import middie from "middie";
 import morgan from "morgan";
 
@@ -32,11 +36,20 @@ async function bootstrap() {
     sharedSchemaId: "#multiPartSchema",
   });
 
+  server.register(fastifyBcrypt, { saltWorkFactor: 10 });
+
   if (server.config.ENV === "prod") {
     server.register(fastifyHelmet);
-  } else {
-    server.register(fastifyCors);
   }
+
+  if (server.config.ENV === "dev") {
+    server.register(fastifyCors, {
+      origin: "http://localhost:3000",
+      credentials: true,
+    });
+  }
+
+  await server.register(fastifyCookie);
 
   await server.register(middie);
   server.use(morgan("dev"));
@@ -50,6 +63,10 @@ async function bootstrap() {
   });
 
   await server.register(routeServices);
+
+  await server.register(authPlugin);
+
+  server.register(authRoute, { prefix: "/api/auth" });
   server.register(departmentRoute, { prefix: "/api/departments" });
   server.register(userRoute, { prefix: "/api/users" });
   server.register(courseRoute, { prefix: "/api/courses" });
@@ -61,11 +78,17 @@ async function bootstrap() {
   server.register(feedbackRoute, { prefix: "/api/feedbacks" });
   server.register(submissionRoute, { prefix: "/api/submissions" });
 
-  server.setErrorHandler((error, request, reply) => {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      reply.status(500).send({ isPrismaError: true, error });
+  server.setErrorHandler((error, _req, reply) => {
+    if (error instanceof NotFound) {
+      reply.code(404).send({ ok: false, message: error.message });
+    } else if (error instanceof BadRequest) {
+      reply.code(400).send({ ok: false, message: error.message });
+    } else if (error instanceof Unauthorized) {
+      reply.code(401).send({ ok: false, message: error.message });
+    } else if (error instanceof Forbidden) {
+      reply.code(403).send({ ok: false, message: error.message });
     } else {
-      reply.status(500).send(error);
+      reply.code(500).send(error);
     }
   });
 
