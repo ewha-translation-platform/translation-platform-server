@@ -2,8 +2,6 @@
 
 ## Error Handling
 
----
-
 **example**
 
 ```js
@@ -16,8 +14,6 @@ function handler(){
 ```
 
 ## File Structure
-
----
 
 The file structure is highly inspired by [Nest.js](https://nestjs.com)
 
@@ -38,8 +34,6 @@ route
 
 ## Required Stack
 
----
-
 - Typescript
 - [Fastify](https://fastify.io)
 - [TypeBox](https://github.com/sinclairzx81/typebox)
@@ -47,8 +41,6 @@ route
 - MySQL
 
 ## Conventions
-
----
 
 ### 1. Commit Messages
 
