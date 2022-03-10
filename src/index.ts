@@ -1,3 +1,4 @@
+import "module-alias/register"
 import {
   authPlugin,
   fastifyBcrypt,
@@ -88,6 +89,7 @@ async function bootstrap() {
     } else if (error instanceof Forbidden) {
       reply.code(403).send({ ok: false, message: error.message });
     } else {
+      console.log(error);
       reply.code(500).send(error);
     }
   });
