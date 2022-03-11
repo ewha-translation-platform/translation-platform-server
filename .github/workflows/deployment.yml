@@ -33,7 +33,7 @@ jobs:
       run: |
         touch dist/.env
         echo DB_URL=${{ secrets.DB_URL }} >> dist/.env
-        echo PORT=3030 >> dist/.env
+        echo PORT=3000 >> dist/.env
         echo ENV=prod >> dist/.env
         echo JWT_TOKEN_SECRET=${{ secrets.JWT_TOKEN_SECRET }} >> dist/.env
         echo ACCESS_TOKEN_EXPIRATION_TIME=900 >> dist/.env
