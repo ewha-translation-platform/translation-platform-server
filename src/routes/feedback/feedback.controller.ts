@@ -47,7 +47,7 @@ export default async function (server: FastifyInstance) {
       const data = await server.feedbackService.create({
         ...rest,
         submission: { connect: { id: submissionId } },
-        professor: { connect: { id: professorId } },
+        professor: { connect: { academicId: professorId } },
         categories: { connect: categoryIds.map((id) => ({ id })) },
       });
       reply.code(201);

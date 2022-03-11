@@ -36,7 +36,7 @@ export default async function (server: FastifyInstance) {
     },
   });
 
-  const ParamsSchema = Type.Object({ id: Type.String() });
+  const ParamsSchema = Type.Object({ id: Type.Integer() });
   type Params = Static<typeof ParamsSchema>;
   server.get<{ Params: Params }>("/:id", {
     schema: {

@@ -24,7 +24,6 @@ class SubmissionService {
       where,
       ...submissionInclude,
     });
-    if (!submission) throw new Error("Not Found");
     return submission;
   }
 

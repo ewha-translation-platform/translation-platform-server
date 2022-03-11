@@ -35,7 +35,7 @@ class UserService {
     return user;
   }
 
-  async update(id: string, data: Prisma.UserUpdateInput) {
+  async update(id: number, data: Prisma.UserUpdateInput) {
     return await this._prisma.user.update({
       where: { id },
       data,
@@ -43,7 +43,7 @@ class UserService {
     });
   }
 
-  async delete(id: string) {
+  async delete(id: number) {
     return await this._prisma.user.delete({
       where: { id },
       ...userInclude,

@@ -7,7 +7,7 @@ import {
 } from "../user/dto/create-user.dto";
 
 const BodySchema = Type.Object({
-  id: Type.String(),
+  email: Type.String({ format: "email" }),
   password: Type.String(),
 });
 type Body = Static<typeof BodySchema>;
@@ -30,9 +30,10 @@ export default async function (server: FastifyInstance) {
     schema: { body: BodySchema },
     async handler(req, reply) {
       try {
-        const { id, password } = req.body;
+        console.log(req.body);
+        const { email, password } = req.body;
 
-        const user = await server.authService.login(id, password);
+        const user = await server.authService.login(email, password);
 
         this.authService.setRefreshTokenCookie(reply, user);
         return { accessToken: server.createAccessToken(user) };

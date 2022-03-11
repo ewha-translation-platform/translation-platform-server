@@ -1,7 +1,7 @@
 import { Type, Static } from "@sinclair/typebox";
 
 export const SubmissionStatusEntitySchema = Type.Object({
-  studentId: Type.String(),
+  studentId: Type.Integer(),
   submissionId: Type.Union([Type.Null(), Type.Integer()]),
   firstName: Type.String(),
   lastName: Type.String(),

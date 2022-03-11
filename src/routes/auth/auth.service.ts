@@ -12,7 +12,7 @@ declare module "fastify" {
 
 interface IAuthService {
   register(createUserDto: CreateUserDto): Promise<User>;
-  login(id: string, password: string): Promise<User>;
+  login(email: string, password: string): Promise<User>;
   setRefreshTokenCookie(reply: FastifyReply, user: User): void;
   clearRefreshTokenCookie(reply: FastifyReply): void;
 }
@@ -32,8 +32,8 @@ export default fp(async (server) => {
       });
     }
 
-    async login(id: string, password: string) {
-      const user = await server.userService.findOne({ id });
+    async login(email: string, password: string) {
+      const user = await server.userService.findOne({ email });
 
       if (!user || !(await server.bcrypt.compare(password, user.password)))
         throw new BadRequest(

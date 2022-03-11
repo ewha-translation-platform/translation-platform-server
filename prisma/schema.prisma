@@ -28,7 +28,9 @@ model Department {
 }
 
 model User {
-  id               String                    @id
+  id               Int                       @id @default(autoincrement())
+  email            String                    @unique
+  academicId       String?                   @unique
   firstName        String                    @map("first_name")
   lastName         String                    @map("last_name")
   password         String
@@ -81,8 +83,8 @@ model StudentAttendsClass {
   student User  @relation(fields: [studentId], references: [id])
   class   Class @relation(fields: [classId], references: [id])
 
-  studentId String @map("student_id")
-  classId   Int    @map("class_id")
+  studentId Int @map("student_id")
+  classId   Int @map("class_id")
 
   @@id([studentId, classId])
   @@map("student_attends_class")
@@ -92,8 +94,8 @@ model AssistantAssistsClass {
   assistant User  @relation(fields: [assistantId], references: [id])
   class     Class @relation(fields: [classId], references: [id])
 
-  assistantId String @map("assistant_id")
-  classId     Int    @map("class_id")
+  assistantId Int @map("assistant_id")
+  classId     Int @map("class_id")
 
   @@id([assistantId, classId])
   @@map("assistant_assists_class")
@@ -103,8 +105,8 @@ model ProfessorInstructsClass {
   professor User  @relation(fields: [professorId], references: [id])
   class     Class @relation(fields: [classId], references: [id])
 
-  professorId String @map("professor_id")
-  classId     Int    @map("class_id")
+  professorId Int @map("professor_id")
+  classId     Int @map("class_id")
 
   @@id([professorId, classId])
   @@map("professor_instructs_class")
@@ -152,9 +154,9 @@ model Submission {
   stagedSubmission Submission? @relation("stage_submission", fields: [stagedSubmissionId], references: [id])
   draftSubmission  Submission? @relation("stage_submission")
 
-  studentId          String @map("student_id")
-  assignmentId       Int    @map("assignment_id")
-  stagedSubmissionId Int?   @unique @map("staged_submission_id")
+  studentId          Int  @map("student_id")
+  assignmentId       Int  @map("assignment_id")
+  stagedSubmissionId Int? @unique @map("staged_submission_id")
 
   @@unique([assignmentId, studentId, staged])
   @@map("submission")
@@ -172,9 +174,9 @@ model Feedback {
   stagedFeedback     Feedback?          @relation("stage_feedback", fields: [stagedFeedbackId], references: [id])
   draftFeedback      Feedback?          @relation("stage_feedback")
 
-  submissionId     Int    @map("submission_id")
-  professorId      String @map("professor_id")
-  stagedFeedbackId Int?   @unique @map("staged_feedback_id")
+  submissionId     Int  @map("submission_id")
+  professorId      Int  @map("professor_id")
+  stagedFeedbackId Int? @unique @map("staged_feedback_id")
 
   @@map("feedback")
 }

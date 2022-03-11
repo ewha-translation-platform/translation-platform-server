@@ -14,6 +14,7 @@ import {
   SubmissionEntity,
   SubmissionEntitySchema,
 } from "./entities/submission.entity";
+import { NotFound } from "http-errors";
 
 export default async function (server: FastifyInstance) {
   server.get("/", {
@@ -35,6 +36,7 @@ export default async function (server: FastifyInstance) {
     },
     async handler({ params: { id } }): Promise<SubmissionEntity> {
       const data = await server.submissionService.findOne({ id });
+      if (!data) throw new NotFound("Submission not found");
       return new SubmissionEntity(data);
     },
   });
@@ -48,7 +50,7 @@ export default async function (server: FastifyInstance) {
       const { studentId, assignmentId, ...rest } = body;
       const data = await server.submissionService.create({
         ...rest,
-        student: { connect: { id: studentId } },
+        student: { connect: { academicId: studentId } },
         assignment: { connect: { id: assignmentId } },
       });
       reply.code(201);
@@ -79,6 +81,44 @@ export default async function (server: FastifyInstance) {
         audioFile: await body.audioFile.toBuffer(),
       });
       return { ok: true };
+    },
+  });
+
+  server.post<{ Params: Params }>("/:id/stage", {
+    schema: { params: ParamsSchema },
+    async handler({ params: { id } }, _reply) {
+      const draft = await server.submissionService.findOne({ id });
+      if (!draft) throw new NotFound("Submission not found");
+
+      const {
+        id: draftId,
+        assignmentId,
+        studentId,
+        stagedSubmissionId,
+        textFile,
+        audioFile,
+        playCount,
+        playbackRate,
+      } = draft;
+      if (stagedSubmissionId) {
+        return await server.submissionService.update(stagedSubmissionId, {
+          textFile,
+          audioFile,
+          playCount,
+          playbackRate,
+        });
+      } else {
+        return await server.submissionService.create({
+          assignment: { connect: { id: assignmentId } },
+          student: { connect: { id: studentId } },
+          draftSubmission: { connect: { id: draftId } },
+          staged: true,
+          textFile,
+          audioFile,
+          playCount,
+          playbackRate,
+        });
+      }
     },
   });
 
