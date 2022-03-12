@@ -1,4 +1,4 @@
-import "module-alias/register"
+import "module-alias/register";
 import {
   authPlugin,
   fastifyBcrypt,
@@ -10,6 +10,7 @@ import {
   fastifyMultipart,
   fastifySwagger,
   prismaPlugin,
+  fastifyStatic,
 } from "@/plugins";
 import {
   assignmentRoute,
@@ -27,6 +28,7 @@ import Fastify from "fastify";
 import { BadRequest, NotFound, Unauthorized, Forbidden } from "http-errors";
 import middie from "middie";
 import morgan from "morgan";
+import path from "path";
 
 async function bootstrap() {
   const server = Fastify();
@@ -78,6 +80,8 @@ async function bootstrap() {
   });
   server.register(feedbackRoute, { prefix: "/api/feedbacks" });
   server.register(submissionRoute, { prefix: "/api/submissions" });
+
+  server.register(fastifyStatic, { root: path.join(__dirname, "public") });
 
   server.setErrorHandler((error, _req, reply) => {
     if (error instanceof NotFound) {
