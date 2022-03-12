@@ -39,3 +39,6 @@ jobs:
         echo ACCESS_TOKEN_EXPIRATION_TIME=900 >> dist/.env
         echo REFRESH_TOKEN_EXPIRATION_TIME=1209600 >> dist/.env
         cat dist/.env
+    
+    - name: Create symbolic path to static folder
+      run: ln -s ${{ secrets.PUBLIC_FOLDER_PATH }} dist/public
