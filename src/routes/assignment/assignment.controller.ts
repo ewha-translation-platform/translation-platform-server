@@ -1,5 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
+import { NotFound } from "http-errors";
 import {
   CreateAssignmentDto,
   CreateAssignmentDtoSchema,
@@ -123,6 +124,23 @@ export default async function (server: FastifyInstance) {
     },
   });
 
+  server.get<{ Params: Params }>("/:id/submissions/my", {
+    schema: { params: ParamsSchema },
+    preHandler: [server.auth([server.verifyAccessToken])],
+    async handler({ params: { id }, user }) {
+      const submission = await server.submissionService.findOne({
+        assignmentId_studentId_staged: {
+          assignmentId: id,
+          studentId: user.id,
+          staged: false,
+        },
+      });
+      if (!submission) throw new NotFound("Submission not found");
+
+      return submission;
+    },
+  });
+
   server.get<{ Params: Params }>("/:id/submissions", {
     schema: {
       params: ParamsSchema,
@@ -130,11 +148,11 @@ export default async function (server: FastifyInstance) {
     },
     async handler({ params: { id } }): Promise<SubmissionStatusEntity[]> {
       const data = await server.assignmentService.getSubmissions(id);
+      console.log(data);
 
       return data.map((d) => {
         const submission = d.submissions.length === 0 ? null : d.submissions[0];
-        // const stagedSubmission = submission?.stagedSubmission || null;
-        const stagedSubmission = submission;
+        const stagedSubmission = submission?.stagedSubmission || null;
 
         return {
           ...d,

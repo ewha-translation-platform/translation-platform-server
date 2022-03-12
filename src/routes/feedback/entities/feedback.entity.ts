@@ -31,7 +31,6 @@ export const FeedbackEntitySchema = Type.Object({
   selectedSourceText: Type.Boolean(),
   comment: Type.Union([Type.Null(), Type.String()]),
   categories: Type.Array(FeedbackCategoryEntitySchema),
-  staged: Type.Boolean(),
 });
 
 export class FeedbackEntity implements Static<typeof FeedbackEntitySchema> {
@@ -42,7 +41,6 @@ export class FeedbackEntity implements Static<typeof FeedbackEntitySchema> {
   selectedSourceText: boolean;
   comment: string | null;
   categories: FeedbackCategoryEntity[];
-  staged: boolean;
 
   constructor(feedback: FeedbackExtended) {
     this.id = feedback.id;
@@ -52,6 +50,5 @@ export class FeedbackEntity implements Static<typeof FeedbackEntitySchema> {
     this.selectedSourceText = feedback.selectedSourceText;
     this.comment = feedback.comment;
     this.categories = feedback.categories;
-    this.staged = feedback.staged;
   }
 }

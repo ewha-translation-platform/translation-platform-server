@@ -199,7 +199,6 @@ async function main() {
       selectedIdx: { start: 0, end: 10 },
       comment: "피드백 코맨트",
       selectedSourceText: false,
-      staged: false,
       submission: { connect: { id: 1 } },
       categories: {
         connectOrCreate: {

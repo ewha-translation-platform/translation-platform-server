@@ -1,7 +1,8 @@
+import { AssignmentEntity } from "@/routes/assignment/entities/assignment.entity";
+import { UserEntity } from "@/routes/user/entities/user.entity";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
-import { UserEntity } from "@/routes/user/entities/user.entity";
-import { AssignmentEntity } from "@/routes/assignment/entities/assignment.entity";
+import { NotFound } from "http-errors";
 import { CreateClassDto, CreateClassDtoSchema } from "./dto/create-class.dto";
 import { UpdateClassDto, UpdateClassDtoSchema } from "./dto/update-class.dto";
 import { ClassEntity, ClassEntitySchema } from "./entities/class.entity";
@@ -12,8 +13,14 @@ export default async function (server: FastifyInstance) {
       response: { 200: Type.Array(ClassEntitySchema) },
     },
     preHandler: server.auth([server.verifyAccessToken]),
-    async handler(): Promise<ClassEntity[]> {
-      const data = await server.classService.findAll({});
+    async handler({ user }): Promise<ClassEntity[]> {
+      const data = await server.classService.findAll({
+        OR: [
+          { professors: { some: { professorId: user.id } } },
+          { assistants: { some: { assistantId: user.id } } },
+          { students: { some: { studentId: user.id } } },
+        ],
+      });
       return data.map((d) => new ClassEntity(d));
     },
   });
@@ -42,11 +49,13 @@ export default async function (server: FastifyInstance) {
         ...rest,
         course: { connect: { id: courseId } },
         students: {
-          create: studentIds.map((id) => ({ student: { connect: { id } } })),
+          create: studentIds.map((id) => ({
+            student: { connect: { academicId: id } },
+          })),
         },
         professors: {
           create: professorIds.map((id) => ({
-            professor: { connect: { id } },
+            professor: { connect: { academicId: id } },
           })),
         },
       });
@@ -82,14 +91,25 @@ export default async function (server: FastifyInstance) {
     },
   });
 
-  server.post<{ Params: Params; Body: { academicIds: string[] } }>(
-    "/:id/students",
+  server.post<{ Params: { classId: number; studentAcademicId: string } }>(
+    "/:classId/students/:studentAcademicId",
     {
       schema: {
-        params: ParamsSchema,
-        body: Type.Object({ academicIds: Type.Array(Type.String()) }),
+        params: Type.Object({
+          classId: Type.Integer(),
+          studentAcademicId: Type.String(),
+        }),
       },
-      async handler({ params: { id }, body }) {
+      async handler({ params: { classId, studentAcademicId } }) {
+        const student = await server.userService.findOne({
+          academicId: studentAcademicId,
+        });
+        if (!student) throw new NotFound("Student not found");
+
+        await server.prisma.studentAttendsClass.create({
+          data: { classId, studentId: student.id },
+        });
+
         return { ok: true };
       },
     }

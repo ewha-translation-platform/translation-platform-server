@@ -145,9 +145,9 @@ model Submission {
   audioFile        Bytes?      @map("audio_file") @db.MediumBlob
   playCount        Int?        @map("play_count")
   playbackRate     Float?      @map("playback_rate")
-  staged           Boolean     @default(false)
   generalReview    String?     @map("general_review") @db.Text
   feedbacks        Feedback[]
+  staged           Boolean     @default(false)
   graded           Boolean     @default(false)
   openedToStudent  Boolean     @default(false)
   updatedDateTime  DateTime    @updatedAt @map("updated_datetime")
@@ -170,13 +170,9 @@ model Feedback {
   selectedSourceText Boolean            @default(false) @map("seleted_source_text")
   comment            String?
   categories         FeedbackCategory[] @relation("categories_on_feedback")
-  staged             Boolean
-  stagedFeedback     Feedback?          @relation("stage_feedback", fields: [stagedFeedbackId], references: [id])
-  draftFeedback      Feedback?          @relation("stage_feedback")
 
-  submissionId     Int  @map("submission_id")
-  professorId      Int  @map("professor_id")
-  stagedFeedbackId Int? @unique @map("staged_feedback_id")
+  submissionId Int @map("submission_id")
+  professorId  Int @map("professor_id")
 
   @@map("feedback")
 }
