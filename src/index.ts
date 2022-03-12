@@ -43,6 +43,7 @@ async function bootstrap() {
 
   if (server.config.ENV === "prod") {
     server.register(fastifyHelmet);
+    server.register(fastifyCors, { origin: false, credentials: true });
   }
 
   if (server.config.ENV === "dev") {
