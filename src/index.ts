@@ -39,6 +39,11 @@ async function bootstrap() {
     sharedSchemaId: "#multiPartSchema",
   });
 
+  server.register(fastifyStatic, {
+    root: path.join(__dirname, "public"),
+    wildcard: false,
+  });
+
   server.register(fastifyBcrypt, { saltWorkFactor: 10 });
 
   if (server.config.ENV === "prod") {
@@ -82,7 +87,9 @@ async function bootstrap() {
   server.register(feedbackRoute, { prefix: "/api/feedbacks" });
   server.register(submissionRoute, { prefix: "/api/submissions" });
 
-  server.register(fastifyStatic, { root: path.join(__dirname, "public") });
+  server.get("/*", (_req, reply) => {
+    reply.sendFile("index.html");
+  });
 
   server.setErrorHandler((error, _req, reply) => {
     if (error instanceof NotFound) {
