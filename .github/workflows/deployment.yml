@@ -31,14 +31,14 @@ jobs:
       
     - name: Generate dotenv file
       run: |
-        touch dist/.env
-        echo DB_URL=${{ secrets.DB_URL }} >> dist/.env
-        echo PORT=3000 >> dist/.env
-        echo ENV=prod >> dist/.env
-        echo JWT_TOKEN_SECRET=${{ secrets.JWT_TOKEN_SECRET }} >> dist/.env
-        echo ACCESS_TOKEN_EXPIRATION_TIME=900 >> dist/.env
-        echo REFRESH_TOKEN_EXPIRATION_TIME=1209600 >> dist/.env
-        cat dist/.env
+        touch .env
+        echo DB_URL=${{ secrets.DB_URL }} >> .env
+        echo PORT=3000 >> .env
+        echo ENV=prod >> .env
+        echo JWT_TOKEN_SECRET=${{ secrets.JWT_TOKEN_SECRET }} >> .env
+        echo ACCESS_TOKEN_EXPIRATION_TIME=900 >> .env
+        echo REFRESH_TOKEN_EXPIRATION_TIME=1209600 >> .env
+        cat .env
     
     - name: Create symbolic path to static folder
       run: ln -s ${{ secrets.PUBLIC_FOLDER_PATH }} dist/public
