@@ -47,8 +47,7 @@ async function bootstrap() {
   server.register(fastifyBcrypt, { saltWorkFactor: 10 });
 
   if (server.config.ENV === "prod") {
-    server.register(fastifyHelmet);
-    server.register(fastifyCors, { origin: false, credentials: true });
+    server.register(fastifyHelmet, { contentSecurityPolicy: false });
   }
 
   if (server.config.ENV === "dev") {
