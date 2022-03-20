@@ -1,6 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
 import { NotFound } from "http-errors";
+import { SubmissionEntity } from "../submission/entities/submission.entity";
 import {
   CreateAssignmentDto,
   CreateAssignmentDtoSchema,
@@ -71,7 +72,7 @@ export default async function (server: FastifyInstance) {
         where: { id },
         select: { audioFile: true },
       });
-      if (!data?.audioFile) throw new Error("Not Found");
+      if (!data?.audioFile) throw new NotFound("Audiofile doesn't exist");
 
       return data.audioFile;
     },
@@ -137,7 +138,7 @@ export default async function (server: FastifyInstance) {
       });
       if (!submission) throw new NotFound("Submission not found");
 
-      return submission;
+      return new SubmissionEntity(submission);
     },
   });
 

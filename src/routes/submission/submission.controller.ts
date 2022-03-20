@@ -1,5 +1,7 @@
+import { Prisma } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance } from "fastify";
+import { NotFound } from "http-errors";
 import {
   CreateSubmissionDto,
   CreateSubmissionDtoSchema,
@@ -14,7 +16,6 @@ import {
   SubmissionEntity,
   SubmissionEntitySchema,
 } from "./entities/submission.entity";
-import { NotFound } from "http-errors";
 
 export default async function (server: FastifyInstance) {
   server.get("/", {
@@ -50,7 +51,7 @@ export default async function (server: FastifyInstance) {
       const { studentId, assignmentId, ...rest } = body;
       const data = await server.submissionService.create({
         ...rest,
-        student: { connect: { academicId: studentId } },
+        student: { connect: { id: studentId } },
         assignment: { connect: { id: assignmentId } },
       });
       reply.code(201);
@@ -68,7 +69,7 @@ export default async function (server: FastifyInstance) {
         where: { id },
         select: { audioFile: true },
       });
-      if (!data?.audioFile) throw new Error("Not Found");
+      if (!data?.audioFile) throw new NotFound("Audiofile doesn't exist");
 
       return data.audioFile;
     },
@@ -97,6 +98,7 @@ export default async function (server: FastifyInstance) {
         stagedSubmissionId,
         textFile,
         audioFile,
+        sequentialRegions,
         playCount,
         playbackRate,
       } = draft;
@@ -104,6 +106,7 @@ export default async function (server: FastifyInstance) {
         return await server.submissionService.update(stagedSubmissionId, {
           textFile,
           audioFile,
+          sequentialRegions: sequentialRegions ?? Prisma.JsonNull,
           playCount,
           playbackRate,
         });
@@ -115,6 +118,7 @@ export default async function (server: FastifyInstance) {
           staged: true,
           textFile,
           audioFile,
+          sequentialRegions: sequentialRegions ?? Prisma.JsonNull,
           playCount,
           playbackRate,
         });
@@ -124,8 +128,14 @@ export default async function (server: FastifyInstance) {
 
   server.patch<{ Params: Params; Body: UpdateSubmissionDto }>("/:id", {
     schema: { params: ParamsSchema, body: UpdateSubmissionDtoSchema },
-    async handler({ params: { id }, body }): Promise<SubmissionEntity> {
-      const data = await server.submissionService.update(id, body);
+    async handler({
+      params: { id },
+      body: { sequentialRegions, ...rest },
+    }): Promise<SubmissionEntity> {
+      const data = await server.submissionService.update(id, {
+        sequentialRegions: sequentialRegions ?? Prisma.JsonNull,
+        ...rest,
+      });
       return new SubmissionEntity(data);
     },
   });

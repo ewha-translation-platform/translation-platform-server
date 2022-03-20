@@ -16,7 +16,7 @@ import {
   UserExtended,
   userInclude,
 } from "@/routes/user/entities/user.entity";
-import { Submission } from "@prisma/client";
+import { Prisma, Submission } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
 
 export const submissionInclude = {
@@ -44,6 +44,7 @@ export const SubmissionEntitySchema = Type.Object({
   feedbacks: Type.Array(FeedbackEntitySchema),
   graded: Type.Boolean(),
 
+  sequentialRegions: Type.Union([Type.Null(), Type.Any()]),
   playCount: Type.Union([Type.Null(), Type.Integer()]),
   playbackRate: Type.Union([Type.Null(), Type.Number()]),
 });
@@ -59,6 +60,7 @@ export class SubmissionEntity implements Static<typeof SubmissionEntitySchema> {
   graded: boolean;
   openedToStudent: boolean;
 
+  sequentialRegions: Prisma.JsonValue | null;
   playCount: number | null;
   playbackRate: number | null;
 
@@ -73,6 +75,7 @@ export class SubmissionEntity implements Static<typeof SubmissionEntitySchema> {
     this.graded = submission.graded;
     this.openedToStudent = submission.openedToStudent;
 
+    this.sequentialRegions = submission.sequentialRegions;
     this.playCount = submission.playCount;
     this.playbackRate = submission.playbackRate;
   }

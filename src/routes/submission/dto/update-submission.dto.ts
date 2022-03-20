@@ -9,6 +9,7 @@ export const UpdateSubmissionDtoSchema = Type.Partial(
     graded: Type.Boolean(),
     openedToStudent: Type.Boolean(),
 
+    sequentialRegions: Type.Union([Type.Null(), Type.Any()]),
     playCount: Type.Union([Type.Null(), Type.Integer()]),
     playbackRate: Type.Union([Type.Null(), Type.Number()]),
   })

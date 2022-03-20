@@ -138,21 +138,22 @@ model Assignment {
 }
 
 model Submission {
-  id               Int         @id @default(autoincrement())
-  student          User        @relation(fields: [studentId], references: [id])
-  assignment       Assignment  @relation(fields: [assignmentId], references: [id])
-  textFile         String      @map("text_file") @db.Text
-  audioFile        Bytes?      @map("audio_file") @db.MediumBlob
-  playCount        Int?        @map("play_count")
-  playbackRate     Float?      @map("playback_rate")
-  generalReview    String?     @map("general_review") @db.Text
-  feedbacks        Feedback[]
-  staged           Boolean     @default(false)
-  graded           Boolean     @default(false)
-  openedToStudent  Boolean     @default(false)
-  updatedDateTime  DateTime    @updatedAt @map("updated_datetime")
-  stagedSubmission Submission? @relation("stage_submission", fields: [stagedSubmissionId], references: [id])
-  draftSubmission  Submission? @relation("stage_submission")
+  id                Int         @id @default(autoincrement())
+  student           User        @relation(fields: [studentId], references: [id])
+  assignment        Assignment  @relation(fields: [assignmentId], references: [id])
+  textFile          String      @map("text_file") @db.Text
+  audioFile         Bytes?      @map("audio_file") @db.MediumBlob
+  sequentialRegions Json?       @map("sequential_regions")
+  playCount         Int?        @map("play_count")
+  playbackRate      Float?      @map("playback_rate")
+  generalReview     String?     @map("general_review") @db.Text
+  feedbacks         Feedback[]
+  staged            Boolean     @default(false)
+  graded            Boolean     @default(false)
+  openedToStudent   Boolean     @default(false)
+  updatedDateTime   DateTime    @updatedAt @map("updated_datetime")
+  stagedSubmission  Submission? @relation("stage_submission", fields: [stagedSubmissionId], references: [id])
+  draftSubmission   Submission? @relation("stage_submission")
 
   studentId          Int  @map("student_id")
   assignmentId       Int  @map("assignment_id")
