@@ -7,6 +7,7 @@ const schema = Type.Object({
   JWT_TOKEN_SECRET: Type.String(),
   ACCESS_TOKEN_EXPIRATION_TIME: Type.Number(),
   REFRESH_TOKEN_EXPIRATION_TIME: Type.Number(),
+  STT_SERVER_PORT: Type.Number(),
 });
 
 declare module "fastify" {

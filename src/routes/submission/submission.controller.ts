@@ -1,7 +1,9 @@
 import { Prisma } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
+import axios from "axios";
 import { FastifyInstance } from "fastify";
-import { NotFound } from "http-errors";
+import FormData from "form-data";
+import { BadRequest, InternalServerError, NotFound } from "http-errors";
 import {
   CreateSubmissionDto,
   CreateSubmissionDtoSchema,
@@ -15,7 +17,27 @@ import {
 import {
   SubmissionEntity,
   SubmissionEntitySchema,
+  submissionInclude,
 } from "./entities/submission.entity";
+
+interface Region {
+  [prop: string]: Prisma.JsonValue;
+  start: number;
+  end: number;
+}
+
+interface Annotation {
+  start: number;
+  end: number;
+  type: "FILLER" | "BACKTRACK" | "PAUSE" | "DELAY";
+  duration?: number;
+}
+
+interface ResponseData {
+  annotations: Annotation[];
+  textFile: string;
+  timestamps: Region[];
+}
 
 export default async function (server: FastifyInstance) {
   server.get("/", {
@@ -87,41 +109,122 @@ export default async function (server: FastifyInstance) {
 
   server.post<{ Params: Params }>("/:id/stage", {
     schema: { params: ParamsSchema },
+    preHandler: server.auth([server.verifyAccessToken]),
     async handler({ params: { id } }, _reply) {
       const draft = await server.submissionService.findOne({ id });
       if (!draft) throw new NotFound("Submission not found");
 
-      const {
-        id: draftId,
+      let {
         assignmentId,
         studentId,
-        stagedSubmissionId,
         textFile,
         audioFile,
         sequentialRegions,
         playCount,
         playbackRate,
       } = draft;
-      if (stagedSubmissionId) {
-        return await server.submissionService.update(stagedSubmissionId, {
-          textFile,
-          audioFile,
-          sequentialRegions: sequentialRegions ?? Prisma.JsonNull,
-          playCount,
-          playbackRate,
-        });
-      } else {
-        return await server.submissionService.create({
+
+      const stagedSubmission = await server.prisma.submission.upsert({
+        where: {
+          assignmentId_studentId_staged: {
+            assignmentId,
+            studentId,
+            staged: true,
+          },
+        },
+        create: {
           assignment: { connect: { id: assignmentId } },
           student: { connect: { id: studentId } },
-          draftSubmission: { connect: { id: draftId } },
+          draftSubmission: { connect: { id: draft.id } },
           staged: true,
           textFile,
           audioFile,
           sequentialRegions: sequentialRegions ?? Prisma.JsonNull,
           playCount,
           playbackRate,
+        },
+        update: {
+          textFile,
+          audioFile,
+          sequentialRegions: sequentialRegions ?? Prisma.JsonNull,
+          playCount,
+          playbackRate,
+        },
+        ...submissionInclude,
+      });
+
+      await server.prisma.feedback.deleteMany({
+        where: { submissionId: stagedSubmission.id },
+      });
+
+      return stagedSubmission;
+    },
+  });
+
+  server.post<{ Params: Params }>("/:id/stt", {
+    schema: { params: ParamsSchema, response: { 200: SubmissionEntitySchema } },
+    preHandler: server.auth([server.verifyAccessToken, server.verifyProfessor]),
+    async handler({ params: { id }, user }, _reply): Promise<SubmissionEntity> {
+      const submission = await server.submissionService.findOne({ id });
+      if (!submission || !submission.staged || !submission.audioFile)
+        throw new BadRequest("bad request");
+
+      const {
+        audioFile,
+        assignment: { assignmentType },
+        sequentialRegions,
+      } = submission;
+
+      const formData = new FormData();
+      formData.append("file", audioFile);
+      if (assignmentType === "SEQUENTIAL")
+        formData.append("sequentialRegions", JSON.stringify(sequentialRegions));
+
+      try {
+        const {
+          data: { textFile, timestamps, annotations },
+        } = await axios.post<ResponseData>(
+          `http://127.0.0.1:${
+            server.config.STT_SERVER_PORT
+          }/${assignmentType.toLowerCase()}`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+
+        await server.prisma.feedback.deleteMany({
+          where: { submissionId: id },
         });
+
+        for await (const an of annotations) {
+          await server.prisma.feedback.create({
+            data: {
+              selectedIdx: { start: an.start, end: an.end },
+              categories: {
+                connect: {
+                  name:
+                    an.type === "FILLER"
+                      ? "필러"
+                      : an.type === "BACKTRACK"
+                      ? "백트래킹"
+                      : "지연",
+                },
+              },
+              professorId: user.id,
+              selectedSourceText: false,
+              submissionId: id,
+            },
+          });
+        }
+
+        return new SubmissionEntity(
+          await server.submissionService.update(id, {
+            textFile,
+            timestamps,
+          })
+        );
+      } catch (e) {
+        console.error(e);
+        throw new InternalServerError("STT server not working");
       }
     },
   });

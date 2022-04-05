@@ -49,11 +49,28 @@ export default async function (server: FastifyInstance) {
       response: { 201: AssignmentEntitySchema },
     },
     async handler({ body }, reply): Promise<AssignmentEntity> {
-      const { classId, feedbackCategoryIds, ...rest } = body;
+      const { classId, ...rest } = body;
+
+      const feedbackCategoryIds = await server.prisma.feedbackCategory.findMany(
+        {
+          select: { id: true },
+          where: {
+            feedbackCategoryType: {
+              in: [
+                "COMMON",
+                body.assignmentType === "TRANSLATION"
+                  ? "TRANSLATION"
+                  : "INTERPRETATION",
+              ],
+            },
+          },
+        }
+      );
+
       const data = await server.assignmentService.create({
         class: { connect: { id: classId } },
         feedbackCategories: {
-          connect: feedbackCategoryIds.map((id) => ({ id })),
+          connect: feedbackCategoryIds,
         },
         ...rest,
       });

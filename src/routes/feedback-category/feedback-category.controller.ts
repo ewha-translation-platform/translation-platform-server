@@ -43,10 +43,11 @@ export default async function (server: FastifyInstance) {
       response: { 201: FeedbackCategoryEntitySchema },
     },
     async handler({ body }, reply): Promise<FeedbackCategoryEntity> {
-      const { name, assignmentId } = body;
+      const { name, assignmentId, feedbackCategoryType } = body;
       const data = await server.feedbackCategoryService.create({
         name,
         assignments: { connect: { id: assignmentId } },
+        feedbackCategoryType,
       });
       reply.code(201);
       return new FeedbackCategoryEntity(data);
