@@ -44,6 +44,7 @@ export const SubmissionEntitySchema = Type.Object({
   feedbacks: Type.Array(FeedbackEntitySchema),
   graded: Type.Boolean(),
 
+  timestamps: Type.Union([Type.Null(), Type.Any()]),
   sequentialRegions: Type.Union([Type.Null(), Type.Any()]),
   playCount: Type.Union([Type.Null(), Type.Integer()]),
   playbackRate: Type.Union([Type.Null(), Type.Number()]),
@@ -60,6 +61,7 @@ export class SubmissionEntity implements Static<typeof SubmissionEntitySchema> {
   graded: boolean;
   openedToStudent: boolean;
 
+  timestamps: Prisma.JsonValue | null;
   sequentialRegions: Prisma.JsonValue | null;
   playCount: number | null;
   playbackRate: number | null;
@@ -75,6 +77,7 @@ export class SubmissionEntity implements Static<typeof SubmissionEntitySchema> {
     this.graded = submission.graded;
     this.openedToStudent = submission.openedToStudent;
 
+    this.timestamps = submission.timestamps;
     this.sequentialRegions = submission.sequentialRegions;
     this.playCount = submission.playCount;
     this.playbackRate = submission.playbackRate;

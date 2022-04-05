@@ -17,6 +17,7 @@ declare module "fastify" {
     createAccessToken: (user: User) => string;
     createRefreshToken: (user: User) => string;
     revokeRefreshToken: (user: User) => boolean;
+    verifyProfessor: preHandlerAsyncHookHandler;
   }
 }
 
@@ -76,10 +77,15 @@ const authPlugin: FastifyPluginAsync = fp(async (server) => {
     return true;
   };
 
+  const verifyProfessor: preHandlerAsyncHookHandler = async (req, _reply) => {
+    if (req.user.role !== "PROFESSOR") throw new Forbidden();
+  };
+
   server.decorate("verifyAccessToken", verifyAccessToken);
   server.decorate("createAccessToken", createAccessToken);
   server.decorate("createRefreshToken", createRefreshToken);
   server.decorate("revokeRefreshToken", revokeRefreshToken);
+  server.decorate("verifyProfessor", verifyProfessor);
 });
 
 export default authPlugin;
