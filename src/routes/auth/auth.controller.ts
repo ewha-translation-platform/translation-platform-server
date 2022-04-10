@@ -16,9 +16,6 @@ export default async function (server: FastifyInstance) {
   server.post<{ Body: CreateUserDto }>("/register", {
     schema: { body: CreateUserDtoSchema },
     async handler({ body: createUserDto }, reply) {
-      const exists = await this.userService.findOne({ id: createUserDto.id });
-      if (exists) throw new BadRequest("이미 존재하는 학번 / 교번 입니다.");
-
       const user = await this.authService.register(createUserDto);
 
       this.authService.setRefreshTokenCookie(reply, user);
