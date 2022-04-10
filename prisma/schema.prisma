@@ -81,7 +81,7 @@ model Class {
 
 model StudentAttendsClass {
   student User  @relation(fields: [studentId], references: [id])
-  class   Class @relation(fields: [classId], references: [id])
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   studentId Int @map("student_id")
   classId   Int @map("class_id")
@@ -92,7 +92,7 @@ model StudentAttendsClass {
 
 model AssistantAssistsClass {
   assistant User  @relation(fields: [assistantId], references: [id])
-  class     Class @relation(fields: [classId], references: [id])
+  class     Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   assistantId Int @map("assistant_id")
   classId     Int @map("class_id")
@@ -103,7 +103,7 @@ model AssistantAssistsClass {
 
 model ProfessorInstructsClass {
   professor User  @relation(fields: [professorId], references: [id])
-  class     Class @relation(fields: [classId], references: [id])
+  class     Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   professorId Int @map("professor_id")
   classId     Int @map("class_id")
@@ -114,7 +114,7 @@ model ProfessorInstructsClass {
 
 model Assignment {
   id                 Int                @id @default(autoincrement())
-  class              Class              @relation(fields: [classId], references: [id])
+  class              Class              @relation(fields: [classId], references: [id], onDelete: Cascade)
   name               String
   description        String             @db.Text
   keywords           String?
