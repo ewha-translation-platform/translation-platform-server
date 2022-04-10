@@ -44,18 +44,16 @@ export default async function (server: FastifyInstance) {
       response: { 201: ClassEntitySchema },
     },
     async handler({ body }, reply): Promise<ClassEntity> {
-      const { courseId, studentIds, professorIds, ...rest } = body;
+      const { courseId, professorIds, ...rest } = body;
       const data = await server.classService.create({
         ...rest,
         course: { connect: { id: courseId } },
         students: {
-          create: studentIds.map((id) => ({
-            student: { connect: { academicId: id } },
-          })),
+          create: professorIds.map((id) => ({ student: { connect: { id } } })),
         },
         professors: {
           create: professorIds.map((id) => ({
-            professor: { connect: { academicId: id } },
+            professor: { connect: { id } },
           })),
         },
       });
