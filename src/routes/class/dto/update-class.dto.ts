@@ -1,5 +1,11 @@
 import { Static, Type } from "@sinclair/typebox";
-import { CreateClassDtoSchema } from "./create-class.dto";
 
-export const UpdateClassDtoSchema = Type.Partial(CreateClassDtoSchema);
+export const UpdateClassDtoSchema = Type.Partial(
+  Type.Object({
+    courseId: Type.Integer(),
+    classNumber: Type.Integer(),
+    studentIds: Type.Array(Type.Integer()),
+    professorIds: Type.Array(Type.Integer()),
+  })
+);
 export type UpdateClassDto = Static<typeof UpdateClassDtoSchema>;
