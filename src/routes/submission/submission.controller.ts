@@ -1,3 +1,4 @@
+import { createFFmpeg } from "@ffmpeg/ffmpeg";
 import { Prisma } from "@prisma/client";
 import { Static, Type } from "@sinclair/typebox";
 import axios from "axios";
@@ -100,9 +101,13 @@ export default async function (server: FastifyInstance) {
   server.post<{ Params: Params; Body: any }>("/:id/audio", {
     schema: { params: ParamsSchema },
     async handler({ params, body }) {
-      await server.submissionService.update(params.id, {
-        audioFile: await body.audioFile.toBuffer(),
-      });
+      const ffmpeg = createFFmpeg({ log: true });
+      await ffmpeg.load();
+      ffmpeg.FS("writeFile", "input.mp3", await body.audioFile.toBuffer());
+      await ffmpeg.run("-i", "input.mp3", "output.mp3");
+      const audioFile = Buffer.from(ffmpeg.FS("readFile", "output.mp3"));
+
+      await server.submissionService.update(params.id, { audioFile });
       return { ok: true };
     },
   });
