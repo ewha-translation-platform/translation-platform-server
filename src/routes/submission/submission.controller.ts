@@ -181,7 +181,7 @@ export default async function (server: FastifyInstance) {
       } = submission;
 
       const formData = new FormData();
-      formData.append("file", audioFile);
+      formData.append("file", audioFile, "file");
       if (assignmentType === "SEQUENTIAL")
         formData.append("sequentialRegions", JSON.stringify(sequentialRegions));
 
@@ -193,8 +193,14 @@ export default async function (server: FastifyInstance) {
             server.config.STT_SERVER_PORT
           }/${assignmentType.toLowerCase()}`,
           formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          {
+            headers: {
+              "Content-Type": `multipart/form-data; boundary=${formData.getBoundary()}`,
+            },
+          }
         );
+
+        console.log({ textFile, timestamps, annotations });
 
         await server.prisma.feedback.deleteMany({
           where: { submissionId: id },
