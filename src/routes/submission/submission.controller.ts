@@ -197,6 +197,8 @@ export default async function (server: FastifyInstance) {
             headers: {
               "Content-Type": `multipart/form-data; boundary=${formData.getBoundary()}`,
             },
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity
           }
         );
 
