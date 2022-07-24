@@ -80,7 +80,7 @@ model Class {
 }
 
 model StudentAttendsClass {
-  student User  @relation(fields: [studentId], references: [id])
+  student User  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   studentId Int @map("student_id")
@@ -91,7 +91,7 @@ model StudentAttendsClass {
 }
 
 model AssistantAssistsClass {
-  assistant User  @relation(fields: [assistantId], references: [id])
+  assistant User  @relation(fields: [assistantId], references: [id], onDelete: Cascade)
   class     Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   assistantId Int @map("assistant_id")
@@ -139,7 +139,7 @@ model Assignment {
 
 model Submission {
   id                Int         @id @default(autoincrement())
-  student           User        @relation(fields: [studentId], references: [id])
+  student           User        @relation(fields: [studentId], references: [id], onDelete: Cascade)
   assignment        Assignment  @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
   textFile          String      @map("text_file") @db.Text
   audioFile         Bytes?      @map("audio_file") @db.MediumBlob
