@@ -102,7 +102,7 @@ model AssistantAssistsClass {
 }
 
 model ProfessorInstructsClass {
-  professor User  @relation(fields: [professorId], references: [id])
+  professor User  @relation(fields: [professorId], references: [id], onDelete: Cascade)
   class     Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   professorId Int @map("professor_id")
@@ -167,7 +167,7 @@ model Submission {
 model Feedback {
   id                 Int                @id @default(autoincrement())
   submission         Submission         @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-  professor          User               @relation(fields: [professorId], references: [id])
+  professor          User               @relation(fields: [professorId], references: [id], onDelete: Cascade)
   selectedIdx        Json               @map("selected_idx")
   selectedSourceText Boolean            @default(false) @map("seleted_source_text")
   comment            String?
